@@ -1,0 +1,3 @@
+[submodule "RT-Schedule-Frontend"]
+	path = RT-Schedule-Frontend
+	url = https://github.com/HanaBenami/RT-Schedule-Frontend.git
