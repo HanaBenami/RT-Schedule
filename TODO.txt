@@ -1,0 +1,26 @@
+docker compose etc
+
+venv
+requirements.txt 
+package.json V
+
+production - static files?? 
+
+move part of the sensitive data to env vars
+
+CODE REFACTORING
+
+Migration to postgres
+
+Deployment on aws
+dashboard
+centralized logs
+
+TypeScript
+
+Git - README
+
+ssl certificate ? 
+
+Demo - email > automatic registration and calls > automatically delte data after 2 days ?
+Schedule job for delete temp users?
