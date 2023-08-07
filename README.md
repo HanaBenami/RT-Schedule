@@ -1,5 +1,15 @@
 # RT-Schedule
 
+TODO: add build status + online app status + tests coverage ?
+
+A responsive web application for drivers and delivery person
+
+## Application functionality
+- [x] APIs for adding/updating service call
+- [x] Daily schedule, including links to waze and outgoing calls
+- [x] Updating & closing service call on the go, from the driver's mobile
+- [x] 
+
 ## Technologies
 ![Python](https://a11ybadges.com/badge?logo=python)
 ![Django](https://a11ybadges.com/badge?logo=django)
