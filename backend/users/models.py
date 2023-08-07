@@ -114,12 +114,15 @@ class User(models.Model):
             HttpHeaders.AUTHORIZATION: f"Bearer {cls.__getRemoteUsersApiAccessToken()}",
         }
         url = f"{settings.JWT_AUTH['JWT_ISSUER']}api/v2/{urlSuffix}"
-        response = requests.request(
-            method=httpMethod.name,
-            headers=headers,
-            data=json.dumps(data) if data else None,
-            url=url,
-        )
+        request = {
+            "method": httpMethod.name,
+            "headers": headers,
+            "data": json.dumps(data) if data else None,
+            "url": url,
+        }
+        logger.debug(f"Auth0 API request: {request}")
+        response = requests.request(**request)
+        logger.debug(f"Auth0 API response: {response.__dict__}")
         if response.status_code not in expectedStatusCodes:
             raise Exception(response.reason)
         return response
@@ -269,4 +272,6 @@ class User(models.Model):
             response = self.__executeRemoeUsersApiRequest(
                 HTTPMethod.DELETE if i == 0 else HTTPMethod.POST, urlSuffix, data
             )
+            if not self.permissions.all():
+                break
         return response

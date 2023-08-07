@@ -18,6 +18,7 @@ services:
     restart: unless-stopped
     env_file:
       - ./docker/env/db_variables.env
+      - ./docker/env/auth0_variables.env
       - ./docker/env/redis_variables.env
       - ./docker/env/django_variables.env
     build:
@@ -65,6 +66,7 @@ services:
     restart: unless-stopped
     env_file:
       - ./docker/env/db_variables.env
+      - ./docker/env/auth0_variables.env
       - ./docker/env/redis_variables.env
       - ./docker/env/django_variables.env
     build:

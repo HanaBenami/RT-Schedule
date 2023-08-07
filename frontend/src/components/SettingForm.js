@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 
 import { updateSetting } from "../actions/settingsAction";
 import Loader from "./Loader";
 import Message from "./Message";
-import Title from "./Title";
 import RestrictedComponent from "./RestrictedComponent";
 import {
     READ_SYSTEM_SETTINGS_PERMISSION,

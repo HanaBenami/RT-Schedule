@@ -1,14 +1,9 @@
-TODO:
-- make sure all the healthchecks works V
-- create local venv & make sure it works w/ sqlite V
-- makemigrations should be executed locally > change django docker image accordingly V
-- handle warninings in docker-compose output VX
-- create more env var for auth0 data VX
+Git - README
 
-test new .gitignore + clean repository
+use envkey
 
-get rid of the submodules
-
+Demo - email > automatic registration and calls > automatically delte data after 2 days ?
+Schedule job for delete temp users?
 
 code refactoring
 
@@ -19,8 +14,3 @@ centralized logs
 TypeScript
 
 ssl certificate
-
-Git - README
-
-Demo - email > automatic registration and calls > automatically delte data after 2 days ?
-Schedule job for delete temp users?

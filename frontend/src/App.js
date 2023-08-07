@@ -2,7 +2,6 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import useAuth from "./auth/useAuth";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScheduleScreen from "./screens/ScheduleScreen";

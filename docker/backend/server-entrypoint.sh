@@ -16,8 +16,8 @@ python manage.py initremoteusers
 echo "Starting gunicorn server in production mode"
 gunicorn base.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4  # TODO: read about guincorn & decide about number of workers/threads
 
-# echo "Starting gunicorn server in DEBUG mode" # TODO: test
+# echo "Starting gunicorn server in DEBUG mode"
 # gunicorn server.wsgi --bind 0.0.0.0:8000 --workers 1 --threads 1 --log-level debug
 
-# echo "Starting development server in DEBUG mode" # TODO: test
+# echo "Starting development server in DEBUG mode"
 # DJANGO_DEBUG=True ./manage.py runserver 0.0.0.0:8000

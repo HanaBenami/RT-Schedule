@@ -29,12 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-e!7yod5yuowk2^2h7xk6fvx4o%#14remm_glo96$^&)4l5$5*6"  # TODO: move to env var
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG", "false").lower() == "true"
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -71,16 +71,15 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.RemoteUserBackend",
 ]
 
-# TODO: move everything to env var
 JWT_AUTH = {
     "JWT_PAYLOAD_GET_USERNAME_HANDLER": "users.utils.jwt_get_username_from_payload_handler",
     "JWT_DECODE_HANDLER": "users.utils.jwt_decode_token",
     "JWT_ALGORITHM": "RS256",
-    "JWT_AUDIENCE": "RT/API",
-    "JWT_ISSUER": "https://dev-dpbcx7l4ewg2wpqo.us.auth0.com/",
+    "JWT_AUDIENCE": os.environ.get("AUTH0_AUDIENCE"),
+    "JWT_ISSUER": f'https://{os.environ.get("AUTH0_DOMAIN")}/',
     "JWT_AUTH_HEADER_PREFIX": "Bearer",
-    "MANAGMENT_API_CLIENT_SECRET": "TDpmaRtTL4NjFvL9aWFpnDHqYuUbATkoBCNX_whTcE63-13bxqJ0DqDUQH9-NOrr",
-    "MANAGMENT_API_CLIENT_ID": "oi7Ivwzs7qaIvvknu5jTw2UanGmHJ6ci",
+    "MANAGMENT_API_CLIENT_SECRET": os.environ.get("AUTH0_MANAGMENT_API_CLIENT_SECRET"),
+    "MANAGMENT_API_CLIENT_ID": os.environ.get("AUTH0_MANAGMENT_API_CLIENT_ID"),
 }
 
 MIDDLEWARE = [
