@@ -1,6 +1,0 @@
-[submodule "frontend"]
-	path = frontend
-	url = https://github.com/HanaBenami/RT-Schedule-Frontend.git
-[submodule "backend"]
-	path = backend
-	url = https://github.com/HanaBenami/RT-Schedule-Backend.git
