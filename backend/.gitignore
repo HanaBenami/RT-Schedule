@@ -1,0 +1,4 @@
+**/__pycache__/
+*.log
+/django_static
+db.sqlite3

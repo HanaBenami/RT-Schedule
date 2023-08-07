@@ -1,0 +1,11 @@
+{
+    "auth0": {
+        "domain": "dev-dpbcx7l4ewg2wpqo.us.auth0.com",
+        "clientId": "zGUMasM64Ul6L37vKwp18TtWy9iQIXGk",
+        "audience": "RT/API"
+    },
+    "app": {
+        "name": "",
+        "logoUrl": ""
+    }
+}

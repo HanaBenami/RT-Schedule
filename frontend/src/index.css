@@ -1,0 +1,147 @@
+element {
+  --main-bg-color: #f8f9fa;
+}
+
+main {
+  min-height: 80vh;
+}
+
+i, img {
+  padding-right: 7px;
+  padding-left: 7px;
+}
+
+.accordion-button::after {
+  margin-left: 0 !important;
+  margin-right: auto;
+}
+
+.nav-link {
+  padding-right: 10px !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+.no-margin {
+  margin: 0px !important;
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.lessPadding, .sticky-top {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.navbar-toggler {
+  border: transparent !important;
+}
+
+.navbar-brand {
+  margin-right: 10px !important;
+}
+
+.bg-light {
+  border-left: 0px !important;
+  border-right: 0px !important;
+}
+
+.btn-primary {
+  color: #f8f9fa !important;
+}
+
+h3 {
+  margin-bottom: 1rem !important;
+  text-decoration: underline;
+}
+
+h5 {
+  margin-bottom: 0rem !important;
+}
+
+.formGroup {
+  margin-bottom: 20px !important;
+}
+
+.bottom-left {
+  left: 0;
+}
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 1px !important;
+  margin-right: 5px !important;
+  vertical-align: middle;
+  border-top: 4px dashed;
+  border-top: 4px solid \9;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+}
+
+.dropup .caret, .navbar-fixed-bottom .dropdown .caret {
+  border-top: 0;
+  border-bottom: 4px dashed;
+  border-bottom: 4px solid \9;
+  content: "";
+}
+
+.form-control {
+  margin-bottom: 10px;
+}
+
+.react-bootstrap-table table {
+   table-layout: auto !important; 
+}
+
+.react-bootstrap-table th {
+  padding: 10px !important;
+  vertical-align: top;
+}
+
+.react-bootstrap-table td {
+  padding: 10px !important;
+}
+
+.toggleList {
+  margin: 10px;
+}
+
+.smallBtn, .filter {
+  padding: 12px !important;
+}
+
+.btn-group.btn-group-toggle.toggleList {
+  display: inline-table;
+}
+
+.form-check-input {
+  margin-left: 5px;
+  background-color: white !important;
+}
+
+.form-check-input:checked {
+  background-color: #1a1a1a !important;
+}
+
+.formControl, .form-control {
+  background-color: #f7f7f9 !important;
+}
+
+.borderBottomRows tr {
+  border-bottom-width: 1px;
+}
+
+.borderBottomRows tr tr {
+  border-bottom-width: 0px;
+}
+
+.__json-pretty__ {
+  font-size: x-small;
+  background-color: white;
+}

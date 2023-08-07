@@ -1,6 +1,6 @@
-[submodule "RT-Schedule-Frontend"]
-	path = RT-Schedule-Frontend
+[submodule "frontend"]
+	path = frontend
 	url = https://github.com/HanaBenami/RT-Schedule-Frontend.git
-[submodule "RT-Schedule-Backend"]
-	path = RT-Schedule-Backend
+[submodule "backend"]
+	path = backend
 	url = https://github.com/HanaBenami/RT-Schedule-Backend.git

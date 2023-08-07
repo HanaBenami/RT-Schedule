@@ -1,0 +1,41 @@
+{
+  "calls": [
+    {
+      "externalId": 888,
+      "customer": "אבי ובניו",
+      "type": "טיפול שנתי",
+      "description": "",
+      "vehicle": "מכסת טורו '19",
+      "address": "סוקולוב 60, הרצליה",
+      "contacts": [
+        {
+          "name": "בני",
+          "phone": "04-6490641"
+        },
+        {
+          "name": "אלי"
+        }
+      ],
+      "driverEmail": "hana.benami@gmail.com",
+      "scheduledDate": "2023-08-06",
+      "scheduledOrder": 1
+    },
+    {
+      "externalId": 7,
+      "customer": "ימית 2000",
+      "type": "תקלה",
+      "description": "לא מניע",
+      "vehicle": "קלאבקאר",
+      "address": "ימית 2000, חולון",
+      "contacts": [
+        {
+          "name": "בני",
+          "phone": "04-6490641"
+        }
+      ],
+      "driverEmail": "hana.benami@gmail.com",
+      "scheduledDate": "2023-08-06",
+      "scheduledOrder": 2
+    }
+  ]
+}

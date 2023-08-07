@@ -1,0 +1,98 @@
+version: '3.9'
+
+services:
+
+  db:
+    env_file:
+      - ./docker/env/db_variables.env
+    image: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # volumes  :  # uncomment this and the below (at the end of the file) once we would like the DB to be persistent
+    #   - postgres_data:/var/lib/postgresql/data
+
+  server:
+    restart: unless-stopped
+    env_file:
+      - ./docker/env/db_variables.env
+      - ./docker/env/redis_variables.env
+      - ./docker/env/django_variables.env
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    entrypoint: ./server-entrypoint.sh
+    volumes:
+      - static_volume:/app/django_static
+    expose:
+      - 8000
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl http://localhost:8000/admin || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis-overcommit:
+    # Needed since vm.overcommit_memory=0 in the following redis docker (test: cat /proc/sys/vm/overcommit_memory)
+    build: https://github.com/bkuhl/redis-overcommit-on-host.git
+    restart: no
+    privileged: true
+    volumes:
+      - /proc/sys/vm:/mnt/vm
+
+  redis:
+    restart: always
+    build:
+      context: ./docker/redis
+      dockerfile: Dockerfile
+    expose:
+      - 6379
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli --raw incr ping" ]
+    depends_on:
+      - redis-overcommit
+
+  celery:
+    restart: unless-stopped
+    env_file:
+      - ./docker/env/db_variables.env
+      - ./docker/env/redis_variables.env
+      - ./docker/env/django_variables.env
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    entrypoint: ./celery-entrypoint.sh
+    volumes:
+      - static_volume:/app/django_static
+    depends_on:
+      server:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  nginx:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - static_volume:/app/django_static
+      - ./docker/nginx/development:/etc/nginx/conf.d
+    depends_on:
+      server:
+        condition: service_healthy
+
+volumes:
+  static_volume: {}
+  # postgres_data: {}

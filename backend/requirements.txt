@@ -1,0 +1,15 @@
+Django==4.2.3
+django_extra_settings==0.10.0
+djangorestframework==3.14.0
+http_constants==0.5.0
+PyJWT>=1.5.2,<2.0.0
+cryptography
+Requests==2.31.0
+psycopg2>=2.8
+celery==5.3.1
+django-celery-beat==2.5.0
+django-celery-results==2.5.1
+django-cors-headers==4.2.0
+redis==4.6.0
+djangorestframework-jwt==1.11.0
+gunicorn
