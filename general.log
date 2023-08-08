@@ -1,0 +1,36 @@
+[django.utils.autoreload INFO 2023-08-08 11:27:29,268]: Watching for file changes with StatReloader
+
+[django.utils.autoreload INFO 2023-08-08 11:28:56,274]: Watching for file changes with StatReloader
+
+[django.request WARNING 2023-08-08 11:29:00,678]: Not Found: /django_static/admin/css/base.css
+
+[django.request WARNING 2023-08-08 11:29:00,679]: Not Found: /django_static/admin/css/dark_mode.css
+
+[django.request WARNING 2023-08-08 11:29:00,681]: Not Found: /django_static/admin/css/nav_sidebar.css
+
+[django.request WARNING 2023-08-08 11:29:00,682]: Not Found: /django_static/admin/css/login.css
+
+[django.request WARNING 2023-08-08 11:29:00,692]: Not Found: /django_static/admin/css/responsive.css
+
+[django.request WARNING 2023-08-08 11:29:00,781]: Not Found: /django_static/admin/js/theme.js
+
+[django.request WARNING 2023-08-08 11:29:00,783]: Not Found: /django_static/admin/js/nav_sidebar.js
+
+[users.management.commands.initadmin INFO 2023-08-08 11:29:09,055]: Creating superuser account named admin
+
+[django.utils.autoreload INFO 2023-08-08 11:29:21,263]: Watching for file changes with StatReloader
+
+[django.request WARNING 2023-08-08 11:29:22,336]: Not Found: /django_static/admin/css/base.css
+
+[django.request WARNING 2023-08-08 11:29:22,354]: Not Found: /django_static/admin/css/dark_mode.css
+
+[django.request WARNING 2023-08-08 11:29:22,357]: Not Found: /django_static/admin/css/nav_sidebar.css
+
+[django.request WARNING 2023-08-08 11:29:22,374]: Not Found: /django_static/admin/css/dashboard.css
+
+[django.request WARNING 2023-08-08 11:29:22,383]: Not Found: /django_static/admin/css/responsive.css
+
+[django.request WARNING 2023-08-08 11:29:22,471]: Not Found: /django_static/admin/js/theme.js
+
+[django.request WARNING 2023-08-08 11:29:22,475]: Not Found: /django_static/admin/js/nav_sidebar.js
+

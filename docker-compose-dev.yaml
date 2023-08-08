@@ -3,9 +3,10 @@ version: '3.9'
 services:
 
   db:
+    image: postgres
     env_file:
       - ./docker/env/db_variables.env
-    image: postgres
+      - ./docker/env/envkey.env
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
@@ -16,14 +17,15 @@ services:
 
   server:
     restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
     env_file:
       - ./docker/env/db_variables.env
       - ./docker/env/auth0_variables.env
       - ./docker/env/redis_variables.env
       - ./docker/env/django_variables.env
-    build:
-      context: .
-      dockerfile: ./docker/backend/Dockerfile
+      - ./docker/env/envkey.env
     entrypoint: ./server-entrypoint.sh
     volumes:
       - static_volume:/app/django_static
@@ -64,14 +66,15 @@ services:
 
   celery:
     restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
     env_file:
       - ./docker/env/db_variables.env
       - ./docker/env/auth0_variables.env
       - ./docker/env/redis_variables.env
       - ./docker/env/django_variables.env
-    build:
-      context: .
-      dockerfile: ./docker/backend/Dockerfile
+      - ./docker/env/envkey.env
     entrypoint: ./celery-entrypoint.sh
     volumes:
       - static_volume:/app/django_static
