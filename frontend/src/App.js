@@ -9,6 +9,7 @@ import WelcomeScreen from "./screens/WelcomeScreen";
 import UsersScreen from "./screens/UsersScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import AddCallsScreen from "./screens/AddCallsScreen";
+import DemoScreen from "./screens/DemoScreen";
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                             element={<WelcomeScreen />}
                             exact
                         />
+                        <Route path="/demo" element={<DemoScreen />} exact />
                         <Route
                             path="/schedule"
                             element={<ScheduleScreen />}

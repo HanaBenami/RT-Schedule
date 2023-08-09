@@ -129,6 +129,12 @@ function Header() {
                                             התחבר
                                         </Nav.Link>
                                     </LinkContainer>
+                                    <LinkContainer to="/demo">
+                                        <Nav.Link>
+                                            <Icon icon="fa-user" />
+                                            יצירת משתמש דמו
+                                        </Nav.Link>
+                                    </LinkContainer>
                                 </>
                             )}
                         </Nav>

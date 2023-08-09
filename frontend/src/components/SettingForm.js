@@ -21,6 +21,7 @@ function SettingForm({ setting }) {
 
     const [editMode, setEditMode] = useState(false);
     const [dataChanges, setDataChanges] = useState(false);
+    const [updateRequested, setUpdateRequested] = useState(false);
     const [value, setValue] = useState(setting.current_value);
 
     const dispatch = useDispatch();
@@ -29,15 +30,21 @@ function SettingForm({ setting }) {
 
     const closeEditMode = useCallback(() => {
         setDataChanges(false);
+        setUpdateRequested(false);
         setEditMode(false);
-        setValue(setting.current_value);
-    }, [setting]);
+    }, []);
 
     useEffect(() => {
-        if (success) {
+        if (!editMode) {
+            setValue(setting.current_value);
+        }
+    }, [setting, editMode]);
+
+    useEffect(() => {
+        if (success && updateRequested) {
             closeEditMode();
         }
-    }, [success, closeEditMode]);
+    }, [success, updateRequested, closeEditMode]);
 
     return (
         <RestrictedComponent
@@ -68,7 +75,7 @@ function SettingForm({ setting }) {
                         {readOnly ? (
                             <></>
                         ) : editMode ? (
-                            loading ? (
+                            loading && updateRequested ? (
                                 <Loader size={20} />
                             ) : (
                                 <>
@@ -85,6 +92,7 @@ function SettingForm({ setting }) {
                                         className="m-2"
                                         variant="success"
                                         onClick={() => {
+                                            setUpdateRequested(true);
                                             dispatch(
                                                 updateSetting({
                                                     ...setting,

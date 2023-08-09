@@ -15,7 +15,7 @@ class PermissionSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     last_login = serializers.SerializerMethodField()
     last_login_update = serializers.SerializerMethodField()
-    added_at = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
     permissions = PermissionSerializer(many=True)
 
     def get_date(self, user, date_attribute_name):
@@ -28,8 +28,8 @@ class UserSerializer(serializers.ModelSerializer):
     def get_last_login_update(self, user):
         return self.get_date(user, "last_login_update")
 
-    def get_added_at(self, user):
-        return self.get_date(user, "added_at")
+    def get_created_at(self, user):
+        return self.get_date(user, "created_at")
 
     class Meta:
         model = User
@@ -40,8 +40,9 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "nickname",
             "is_active",
+            "is_temporary",
             "last_login",
             "last_login_update",
-            "added_at",
+            "created_at",
             "permissions",
         )

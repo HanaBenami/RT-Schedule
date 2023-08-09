@@ -10,7 +10,7 @@ import {
 export const settingsListReducer = (state = { settings: [] }, action) => {
     switch (action.type) {
         case SETTINGS_LIST_REQUEST:
-            return { loading: true, calls: [] };
+            return { ...state, loading: true };
         case SETTINGS_LIST_SUCCESS:
             return { loading: false, success: true, settings: action.payload };
         case SETTINGS_LIST_FAIL:
@@ -23,7 +23,7 @@ export const settingsListReducer = (state = { settings: [] }, action) => {
 export const settingUpdateReducer = (state = { setting: null }, action) => {
     switch (action.type) {
         case SETTING_UPDATE_REQUEST:
-            return { loading: true };
+            return { ...state, loading: true };
         case SETTING_UPDATE_SUCCESS:
             return { loading: false, success: true, setting: action.payload };
         case SETTING_UPDATE_FAIL:

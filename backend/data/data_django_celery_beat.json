@@ -24,10 +24,22 @@
         }
     },
     {
+        "model": "django_celery_beat.crontabschedule",
+        "pk": 3,
+        "fields": {
+            "minute": "0",
+            "hour": "3",
+            "day_of_week": "*",
+            "day_of_month": "*",
+            "month_of_year": "*",
+            "timezone": "Asia/Jerusalem"
+        }
+    },
+    {
         "model": "django_celery_beat.periodictasks",
         "pk": 1,
         "fields": {
-            "last_update": "2023-08-06T01:05:30.641Z"
+            "last_update": "2023-08-08T20:26:38.740Z"
         }
     },
     {
@@ -83,6 +95,34 @@
             "last_run_at": null,
             "total_run_count": 0,
             "date_changed": "2023-08-06T01:05:30.641Z",
+            "description": ""
+        }
+    },
+    {
+        "model": "django_celery_beat.periodictask",
+        "pk": 3,
+        "fields": {
+            "name": "Delete inactive temp users @ 3 AM",
+            "task": "Delete inactive temporary users",
+            "interval": null,
+            "crontab": 3,
+            "solar": null,
+            "clocked": null,
+            "args": "[]",
+            "kwargs": "{}",
+            "queue": null,
+            "exchange": null,
+            "routing_key": null,
+            "headers": "{}",
+            "priority": null,
+            "expires": null,
+            "expire_seconds": null,
+            "one_off": false,
+            "start_time": null,
+            "enabled": true,
+            "last_run_at": null,
+            "total_run_count": 0,
+            "date_changed": "2023-08-08T20:26:38.739Z",
             "description": ""
         }
     }

@@ -17,7 +17,7 @@ import {
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Icon from "../components/Icon";
-import { updateUser } from "../actions/userManagmentActions";
+import { createOrUpdateUser } from "../actions/userManagmentActions";
 import UserLastLogin from "./UserLastLogin";
 
 function UserEditDialog({
@@ -28,12 +28,12 @@ function UserEditDialog({
 }) {
     const dispatch = useDispatch();
 
-    const userUpdate = useSelector((state) => state.userUpdate);
+    const userCreateOrUpdate = useSelector((state) => state.userCreateOrUpdate);
     const {
         loading: userUpdateLoading,
         error: userUpdateError,
         success: userUpdateSuccess,
-    } = userUpdate;
+    } = userCreateOrUpdate;
 
     const [permissions, setPermissions] = useState();
 
@@ -238,22 +238,53 @@ function UserEditDialog({
                             </Col>
                         </Form.Group>
 
-                        <Form.Check
-                            reverse
-                            type="switch"
-                            label="פעיל"
-                            id={`isActiveInput${user && user.pk}`}
-                            onChange={() => setDataChanges(true)}
-                            defaultChecked={user ? user.is_active : true}
-                            disabled={readOnly}
-                        />
+                        <Form.Group as={Row}>
+                            <Form.Label column sm={4}>
+                                התחברות אחרונה
+                            </Form.Label>
+                            <Col sm={8} className="col-form-label">
+                                {user && <UserLastLogin user={user} />}
+                            </Col>
+                        </Form.Group>
 
                         <Form.Group as={Row}>
-                            <Form.Label column sm={3}>
-                                כניסה אחרונה
+                            <Form.Label column sm={4}>
+                                תאריך הוספה
                             </Form.Label>
-                            <Col sm={9} className="col-form-label">
-                                {user && <UserLastLogin user={user} />}
+                            <Col sm={8} className="col-form-label">
+                                {user && user.created_at}
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row}>
+                            <Col className="col-form-label">
+                                <Form.Check
+                                    reverse
+                                    type="switch"
+                                    label="משתמש פעיל"
+                                    id={`isActiveInput${user && user.pk}`}
+                                    onChange={() => setDataChanges(true)}
+                                    defaultChecked={
+                                        user ? user.is_active : true
+                                    }
+                                    disabled={readOnly}
+                                />
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row}>
+                            <Col className="col-form-label">
+                                <Form.Check
+                                    reverse
+                                    type="switch"
+                                    label="משתמש זמני"
+                                    id={`isTemporaryInput${user && user.pk}`}
+                                    onChange={() => setDataChanges(true)}
+                                    defaultChecked={
+                                        user ? user.is_temporary : false
+                                    }
+                                    disabled={readOnly}
+                                />
                             </Col>
                         </Form.Group>
                     </Form>
@@ -272,7 +303,7 @@ function UserEditDialog({
                         disabled={!dataChanges}
                         onClick={() => {
                             dispatch(
-                                updateUser({
+                                createOrUpdateUser({
                                     ...user,
                                     first_name: document.getElementById(
                                         `firstNameInput${user && user.pk}`
@@ -286,6 +317,9 @@ function UserEditDialog({
                                     permissions: permissions,
                                     is_active: document.getElementById(
                                         `isActiveInput${user && user.pk}`
+                                    ).checked,
+                                    is_temporary: document.getElementById(
+                                        `isTemporaryInput${user && user.pk}`
                                     ).checked,
                                 })
                             );

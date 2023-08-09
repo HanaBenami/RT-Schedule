@@ -1,13 +1,15 @@
 git readme VX
 
-use envkey
-
-Demo - email > automatic registration and calls > automatically delte data after 2 days ?
-Schedule job for delete temp users?
+code refactoring
+- python:
+-- users
+--- auth0User class
+-- calls
+-- settings
+- react:
+-- ?
 
 tests ?
-
-code refactoring
 
 Deployment on aws > add to readme
 dashboard

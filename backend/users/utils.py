@@ -68,8 +68,11 @@ def has_scope(request, required_scope):
         return False
 
 
-def unauthorizedResponse():
-    response = JsonResponse({"message": "You don't have access to this resource"})
+def unauthorizedResponse(message=None):
+    message = (
+        "You don't have access to this resource" + f": {message}" if message else ""
+    )
+    response = JsonResponse({"message": message})
     response.status_code = 403
     return response
 

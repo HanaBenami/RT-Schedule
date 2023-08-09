@@ -106,7 +106,9 @@ def addCalls(request):
             [requested_call["driverEmail"] for requested_call in requested_calls]
         )
         if any([driver_email != user.email for driver_email in drivers_email]):
-            return unauthorizedResponse()
+            return unauthorizedResponse(
+                "You cannot add calls for others. Please use only your own email address."
+            )
 
     calls = []
     for requested_call in requested_calls:

@@ -13,7 +13,7 @@ class Call(models.Model):
     DELETE_CALL_X_DAYS_POST_SCHEDULED_ORDER_SETTING = SystemSetting(
         key="DELETE_CALL_X_DAYS_POST_SCHEDULED_ORDER",
         default_value=30,
-        description="אחרי כמה ימים מיום שיבוץ קריאה למחוק קריאה שבוצעה? (0 = לעולם)",
+        description="כמה ימים לאחר תאריך שיבוץ קריאה למחוק קריאה שבוצעה? (0 = לעולם לא)",
     )
 
     internalId = models.AutoField(primary_key=True, editable=False)

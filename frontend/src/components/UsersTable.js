@@ -102,6 +102,18 @@ function UsersTable({ users, onUserEdit, onUserAddition }) {
             }),
         },
         {
+            dataField: "is_temporary",
+            text: "זמני",
+            formatter: booleanColumnFormatter,
+            filter: selectFilter({
+                options: {
+                    true: "V",
+                    false: "X",
+                },
+                placeholder: " ",
+            }),
+        },
+        {
             dataField: "last_login",
             text: "התחברות אחרונה",
             formatter: lastLoginColumnFormatter,
@@ -109,7 +121,7 @@ function UsersTable({ users, onUserEdit, onUserAddition }) {
             hidden: true,
         },
         {
-            dataField: "added_at",
+            dataField: "created_at",
             text: "תאריך הוספה",
             sort: true,
             hidden: true,

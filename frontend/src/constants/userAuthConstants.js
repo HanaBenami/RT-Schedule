@@ -35,10 +35,9 @@ export const USER_ALL_PERMISSIONS = [
     UPDATE_SYSTEM_SETTINGS_PERMISSION,
 ];
 
-export const USER_DEFAULT_PERMISSIONS = [
-    READ_MY_CALLS_PERMISSION,
-    UPDATE_MY_CALLS_PERMISSION,
-];
+export const USER_DEFAULT_PERMISSIONS = USER_ALL_PERMISSIONS.filter(
+    (permission) => permission.startsWith("read")
+).concat([UPDATE_MY_CALLS_PERMISSION, ADD_MY_CALLS_PERMISSION]);
 
 export const USER_PERMISSIONS_MAP = {
     "הקריאות שלי": {

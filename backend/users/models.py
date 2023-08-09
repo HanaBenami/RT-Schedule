@@ -6,24 +6,56 @@ from http_constants.status import HttpStatus
 from django.utils import timezone
 import json
 import logging
+from datetime import timedelta
 
 from django.conf import settings
 from . import permissions
 from utils.httpMethod import HTTPMethod
+from settings.models import SystemSetting
 
 logger = logging.getLogger(__name__)
 
 
 class Permission(models.Model):
+    ALL_PERMISSIONS = permissions.ALL_PERMISSIONS
+    DEFAULT_PERMISSIONS = list(
+        filter(
+            lambda permission: permission.lower().startswith("read"), ALL_PERMISSIONS
+        )
+    ) + [permissions.UPDATE_MY_CALLS_PERMISSION, permissions.ADD_MY_CALLS_PERMISSION]
+
     scope_name = models.CharField(max_length=100, null=False, blank=False, unique=True)
 
     def __str__(self):
         return self.scope_name
 
 
+# TODO
+class Auth0RemoteUser:
+    def __init__(self) -> None:
+        pass
+
+
 class User(models.Model):
-    UPDATEABLE_FIELDS = ("first_name", "last_name", "email", "is_active", "permissions")
-    SKIP_PRE_SAVE_SIGNAL = False
+    BASIC_UPDATEABLE_FIELDS = (
+        "first_name",
+        "last_name",
+        "email",
+    )
+    UPDATEABLE_FIELDS = BASIC_UPDATEABLE_FIELDS + (
+        "is_active",
+        "is_temporary",
+        "permissions",
+    )
+    UPDATE_AUTH0_USER_DURING_SAVE = True
+
+    TEMPORARY_USER_ROLE_NAME = "TemporaryUser"
+    TEMPORARY_USER_ROLE_ID = None
+    DELETE_TEMP_USER_X_DAYS_POST_LAST_LOGIN = SystemSetting(
+        key="DELETE_TEMP_USER_X_DAYS_POST_LAST_LOGIN",
+        default_value=7,
+        description="כמה ימים אחרי ההתחברות האחרונה יש למחוק משתמש זמני? (0 = לעולם לא)",
+    )
 
     remote_user_id = models.CharField(
         max_length=100, null=True, blank=True, unique=True
@@ -36,11 +68,12 @@ class User(models.Model):
     )
     first_name = models.CharField(max_length=100, null=False, blank=False)
     last_name = models.CharField(max_length=100, null=False, blank=False)
-    is_active = models.BooleanField(default=False)
-    added_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_temporary = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now, blank=True)
     last_login = models.DateTimeField(null=True, blank=True)
     last_login_update = models.DateTimeField(null=True, blank=True)
-    permissions = models.ManyToManyField(Permission)
+    permissions = models.ManyToManyField(Permission, blank=True)
 
     class Meta:
         unique_together = ["first_name", "last_name"]
@@ -56,7 +89,7 @@ class User(models.Model):
     def __setattr__(self, __name: str, __value: Any) -> None:
         if __name == "permissions":
             for scope_name in __value:
-                assert scope_name in permissions.list
+                assert scope_name in Permission.ALL_PERMISSIONS
             self.permissions.set(
                 [
                     Permission.objects.get_or_create(scope_name=scope_name)[0].pk
@@ -109,18 +142,18 @@ class User(models.Model):
             HttpStatus.NO_CONTENT,
         ],
     ):
-        headers = {
-            HttpHeaders.CONTENT_TYPE: "application/json",
-            HttpHeaders.AUTHORIZATION: f"Bearer {cls.__getRemoteUsersApiAccessToken()}",
-        }
         url = f"{settings.JWT_AUTH['JWT_ISSUER']}api/v2/{urlSuffix}"
         request = {
             "method": httpMethod.name,
-            "headers": headers,
             "data": json.dumps(data) if data else None,
             "url": url,
         }
         logger.debug(f"Auth0 API request: {request}")
+        headers = {
+            HttpHeaders.CONTENT_TYPE: "application/json",
+            HttpHeaders.AUTHORIZATION: f"Bearer {cls.__getRemoteUsersApiAccessToken()}",
+        }
+        request["headers"] = headers
         response = requests.request(**request)
         logger.debug(f"Auth0 API response: {response.__dict__}")
         if response.status_code not in expectedStatusCodes:
@@ -134,6 +167,7 @@ class User(models.Model):
             "email",
             "name",
             "last_login",
+            "created_at",
             "blocked",
         ]
         urlSuffix = f"users?fields={','.join(fields)}"
@@ -142,6 +176,15 @@ class User(models.Model):
     def getRemoteUserPermissions(self):
         urlSuffix = f"users/{self.remote_user_id}/permissions"
         return self.__executeRemoeUsersApiRequest(HTTPMethod.GET, urlSuffix).content
+
+    def getRemoteUserRoles(self):
+        urlSuffix = f"users/{self.remote_user_id}/roles"
+        return [
+            role["name"]
+            for role in self.__executeRemoeUsersApiRequest(
+                HTTPMethod.GET, urlSuffix
+            ).json()
+        ]
 
     @classmethod
     def initRemoteUsers(cls):
@@ -153,7 +196,7 @@ class User(models.Model):
                 "in order to have all the remote users as a starting point"
             )
         else:
-            cls.SKIP_PRE_SAVE_SIGNAL = True
+            cls.UPDATE_AUTH0_USER_DURING_SAVE = False
             for remote_user in remote_users:
                 first_name, last_name = remote_user["name"].split(" ", 2)
                 local_user = User(
@@ -162,6 +205,17 @@ class User(models.Model):
                     first_name=first_name,
                     last_name=last_name,
                     is_active=not remote_user["blocked"],
+                    created_at=remote_user["created_at"],
+                    last_login_update=timezone.now(),
+                    last_login=(
+                        remote_user["last_login"]
+                        if "last_login" in remote_user
+                        else None
+                    ),
+                )
+                local_user.save()
+                local_user.is_temporary = (
+                    cls.TEMPORARY_USER_ROLE_NAME in local_user.getRemoteUserRoles()
                 )
                 local_user.save()
                 local_user.permissions = [
@@ -173,7 +227,7 @@ class User(models.Model):
                 f"The following remote users was created locally:\n"
                 f"{[local_user.list_user_details() for local_user in cls.objects.all()]}"
             )
-            cls.SKIP_PRE_SAVE_SIGNAL = False
+            cls.UPDATE_AUTH0_USER_DURING_SAVE = True
 
     @classmethod
     def syncRemoteUsers(cls):
@@ -229,6 +283,37 @@ class User(models.Model):
         logger.error(f"Errors while syncing remote users: {errors}")
         return errors
 
+    @classmethod
+    def deleteInactiveTemporaryUsers(cls):
+        days = cls.DELETE_TEMP_USER_X_DAYS_POST_LAST_LOGIN.current_value
+        users_to_delete = []
+        if days:
+            logger.debug(
+                f"Going to delete temporary users that didn't logged in in the last {days} days"
+            )
+            temporary_users = cls.objects.filter(is_temporary=True)
+            users_to_delete = (
+                temporary_users.filter(
+                    last_login__isnull=False,
+                    last_login__lt=(timezone.now() + timedelta(days=-days)),
+                )
+                | temporary_users.filter(
+                    last_login__isnull=True,
+                    created_at__lt=(timezone.now() + timedelta(days=-days)),
+                )
+            ).distinct()
+            for user in users_to_delete:
+                user.deleteRemoteUser()
+                user.delete()
+                pass
+            logger.info(f"{len(users_to_delete)} users were deleted: {users_to_delete}")
+        return [user.list_user_details() for user in users_to_delete]
+
+    def deleteRemoteUser(self):
+        urlSuffix = f"users/{self.remote_user_id}"
+        response = self.__executeRemoeUsersApiRequest(HTTPMethod.DELETE, urlSuffix)
+        return response
+
     def updateRemoteUser(self):
         data = {
             "connection": "email",
@@ -259,7 +344,7 @@ class User(models.Model):
                         "permission_name": permission,
                     }
                     for permission in (
-                        permissions.list
+                        Permission.ALL_PERMISSIONS
                         if i == 0
                         else [
                             permission.scope_name
@@ -274,4 +359,25 @@ class User(models.Model):
             )
             if not self.permissions.all():
                 break
+        return response
+
+    @classmethod
+    def getRemoteUsersRoles(cls):
+        urlSuffix = "roles"
+        response = cls.__executeRemoeUsersApiRequest(HTTPMethod.GET, urlSuffix)
+        return response.json()
+
+    def updateRemoteUserIsTemporary(self):
+        if not self.TEMPORARY_USER_ROLE_ID:
+            roles = self.getRemoteUsersRoles()
+            self.TEMPORARY_USER_ROLE_ID = [
+                role for role in roles if role["name"] == "TemporaryUser"
+            ][0]["id"]
+
+        response = None
+        data = {"roles": [self.TEMPORARY_USER_ROLE_ID]}
+        urlSuffix = f"users/{self.remote_user_id}/roles"
+        response = self.__executeRemoeUsersApiRequest(
+            HTTPMethod.POST if self.is_temporary else HTTPMethod.DELETE, urlSuffix, data
+        )
         return response

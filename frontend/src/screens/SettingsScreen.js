@@ -28,17 +28,18 @@ function SettingsScreen() {
                     <Title>הגדרות מערכת</Title>
                 </Row>
                 <Row>
+                    {settings.map((setting) => (
+                        <SettingForm
+                            setting={setting}
+                            key={`form-${setting.key}`}
+                        />
+                    ))}
                     {loading ? (
                         <Loader />
                     ) : error ? (
                         <Message variant="danger">{error}</Message>
                     ) : (
-                        settings.map((setting) => (
-                            <SettingForm
-                                setting={setting}
-                                key={`form-${setting.key}`}
-                            />
-                        ))
+                        <></>
                     )}
                 </Row>
             </Container>

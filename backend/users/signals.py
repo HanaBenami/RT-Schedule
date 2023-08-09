@@ -1,12 +1,12 @@
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 
 from .models import User
 
 
 @receiver(pre_save, sender=User)
-def updateUser(sender, instance: User, **kwargs):
-    if not User.SKIP_PRE_SAVE_SIGNAL:
+def updateRemoteUserPreSave(sender, instance: User, **kwargs):
+    if User.UPDATE_AUTH0_USER_DURING_SAVE:
         user = instance
         user.full_clean(exclude=["remote_user_id"])
         response = user.updateRemoteUser()
@@ -15,4 +15,17 @@ def updateUser(sender, instance: User, **kwargs):
             user.remote_user_id = remote_user_id
         else:
             assert user.remote_user_id == remote_user_id
-        response = user.updateRemoteUserPermissions()
+
+
+@receiver(post_save, sender=User)
+def updateRemoteUserPostSave(sender, instance: User, **kwargs):
+    if User.UPDATE_AUTH0_USER_DURING_SAVE:
+        user = instance
+        user.updateRemoteUserIsTemporary()
+        user.updateRemoteUserPermissions()
+
+
+@receiver(pre_delete, sender=User)
+def deleteRemoteUser(sender, instance: User, **kwargs):
+    user = instance
+    user.deleteRemoteUser()

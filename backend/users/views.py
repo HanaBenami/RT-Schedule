@@ -1,4 +1,8 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+    authentication_classes,
+)
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 import logging
@@ -74,5 +78,41 @@ def createUser(request):
     new_user = User.objects.create(**request.data)
     new_user.save()
     logger.info(f"The user {new_user} was created by {request_user}")
+    seializer = UserSerializer(new_user, many=False)
+    return Response(seializer.data)
+
+
+def lll(num):
+    from functools import wraps
+
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            print(f, num)
+            return f(*args, **kwargs)
+
+        return decorated
+
+    return decorator
+
+
+@api_exception_handler
+@api_view([HTTPMethod.POST.name])
+@authentication_classes([])
+@permission_classes([])
+def createBasicUser(request):
+    logger.debug(
+        f"A request to create a new temporary user was recieved."
+        f"\nRequest data: {request.data}"
+    )
+    for key in request.data.keys():
+        if key not in User.BASIC_UPDATEABLE_FIELDS:
+            raise Exception(f"The {key} of the user cannot be changed")
+
+    new_user = User.objects.create(**request.data, is_active=True, is_temporary=True)
+    new_user.save()
+    new_user.permissions = Permission.DEFAULT_PERMISSIONS
+    new_user.save()
+    logger.info(f"The user {new_user} was created")
     seializer = UserSerializer(new_user, many=False)
     return Response(seializer.data)

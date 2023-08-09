@@ -15,7 +15,8 @@ import {
 import { userAuthReducer } from "./reducers/userAuthReducer";
 import {
     userListReducer,
-    userUpdateReducer,
+    userCreateOrUpdateReducer,
+    basicUserCreateReducer,
 } from "./reducers/userManagmentReducer";
 
 const reducer = combineReducers({
@@ -27,7 +28,8 @@ const reducer = combineReducers({
     settingUpdate: settingUpdateReducer,
     userAuth: userAuthReducer,
     usersList: userListReducer,
-    userUpdate: userUpdateReducer,
+    userCreateOrUpdate: userCreateOrUpdateReducer,
+    basicUserCreate: basicUserCreateReducer,
 });
 
 const middleware = [thunk];

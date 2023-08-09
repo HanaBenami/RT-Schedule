@@ -23,7 +23,6 @@ export const saveUserInfo = (user, accessToken) => async (dispatch) => {
             [USER_EMAIL]: user.email,
             [USER_ACCESS_TOKEN]: accessToken,
         };
-        console.log(accessToken);
 
         dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
     } catch (error) {
