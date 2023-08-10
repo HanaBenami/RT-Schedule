@@ -5,27 +5,22 @@ from .models import User
 
 
 @receiver(pre_save, sender=User)
-def updateRemoteUserPreSave(sender, instance: User, **kwargs):
+def update_remote_user_pre_save(sender, instance: User, **kwargs) -> None:
     if User.UPDATE_AUTH0_USER_DURING_SAVE:
         user = instance
-        user.full_clean(exclude=["remote_user_id"])
-        response = user.updateRemoteUser()
-        remote_user_id = response.json()["user_id"]
-        if user.remote_user_id is None:
-            user.remote_user_id = remote_user_id
-        else:
-            assert user.remote_user_id == remote_user_id
+        user.full_clean(exclude=["auth0_user_id"])
+        user.update_auth0_user_without_permissions()
 
 
 @receiver(post_save, sender=User)
-def updateRemoteUserPostSave(sender, instance: User, **kwargs):
+def update_remote_user_post_save(sender, instance: User, **kwargs) -> None:
     if User.UPDATE_AUTH0_USER_DURING_SAVE:
         user = instance
-        user.updateRemoteUserIsTemporary()
-        user.updateRemoteUserPermissions()
+        user.update_auth0_user_permissions()
 
 
 @receiver(pre_delete, sender=User)
-def deleteRemoteUser(sender, instance: User, **kwargs):
+def delete_remote_user(sender, instance: User, **kwargs) -> None:
     user = instance
-    user.deleteRemoteUser()
+    if user.auth0_user:
+        user.auth0_user.delete()

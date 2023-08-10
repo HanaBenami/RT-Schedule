@@ -11,16 +11,16 @@ class CallAdmin(admin.ModelAdmin):
     save_as = True
     inlines = (ContactAdminInline,)
     list_display = (
-        "externalId",
+        "external_id",
         "customer",
-        "driverEmail",
+        "driver_email",
         "driverUser",
-        "scheduledDate",
-        "scheduledOrder",
-        "isDone",
+        "scheduled_date",
+        "scheduled_order",
+        "is_done",
     )
-    actions = ["openCall"]
+    actions = ["reopen_call"]
 
-    @admin.action(description="Open call")
-    def openCall(self, request, queryset):
-        queryset.update(isDone=False)
+    @admin.action(description="Reopen call")
+    def reopen_call(self, request, queryset):
+        queryset.update(is_done=False)

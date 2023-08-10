@@ -18,7 +18,13 @@ logger = logging.getLogger(__name__)
 @api_exception_handler
 @api_view([HTTPMethod.GET.name])
 @permission_classes([AllowAny])
-def getRoutes(request):
+def get_routes(request):
+    """
+    Get all routes available for this module.
+
+    Usage:
+    GET /api/calls/
+    """
     routes = [
         "/api/calls/list",
         "/api/calls/update/<id>",
@@ -29,13 +35,21 @@ def getRoutes(request):
 @api_exception_handler
 @api_view([HTTPMethod.GET.name])
 @api_requires_scope(READ_MY_CALLS_PERMISSION)
-def getCalls(request):
+def get_calls(request):
+    """
+    Get a list of all the calls in the database.
+    If the user that sent the request has the relevant permission, he will get a list of all the calls, includes calls assigned to others.
+    If not, he will get a list of only is own calls.
+
+    Usage:
+    GET /api/calls/list
+    """
     calls = Call.objects.all()
     user = get_user(request)
     calls = (
         Call.objects.all()
         if has_scope(request, READ_OTHER_CALLS_PERMISSION)
-        else Call.objects.filter(driverEmail=user.email)
+        else Call.objects.filter(driver_email=user.email)
     )
     seializer = CallSerializer(calls, many=True)
     return Response(seializer.data)
@@ -44,22 +58,39 @@ def getCalls(request):
 @api_exception_handler
 @api_view([HTTPMethod.POST.name])
 @api_requires_scope(UPDATE_MY_CALLS_PERMISSION)
-def updateCall(request, externalId):
-    assert request.data.pop("externalId") == externalId
-    call: Call = Call.objects.get(externalId=externalId)
+def update_call(request, external_id):
+    """
+    Update the call details.
+
+    Usage:
+    POST /api/calls/update/888
+    {
+        "external_id":888,
+        "driver_notes":"סתם הערה",
+        "is_done":false
+    }
+    """
+    assert request.data.pop("external_id") == external_id
+    call: Call = Call.objects.get(external_id=external_id)
     user = get_user(request)
     logger.debug(
         f"{user} request to update {call}."
-        f"\nCurrent data: {call.list_call_details()}"
+        f"\nCurrent data: {call.get_details()}"
         f"\nRequest data: {request.data}"
     )
+
     if not (
         user == call.driverUser or has_scope(request, UPDATE_OTHER_CALLS_PERMISSION)
     ):
-        return unauthorizedResponse()
+        return unauthorizedResponse(
+            request=request,
+            message="You don't have permission to update a call assigned to anotheruser",
+        )
+
     for key, value in request.data.items():
         setattr(call, key, value)
     call.save()
+
     logger.info(f"{call} was updated by {user}")
     seializer = CallSerializer(call, many=False)
     return Response(seializer.data)
@@ -68,33 +99,13 @@ def updateCall(request, externalId):
 @api_exception_handler
 @api_view([HTTPMethod.POST.name])
 @api_requires_scope(ADD_MY_CALLS_PERMISSION)
-def addCalls(request):
+def add_calls(request):
     """
-    {
-        "calls": [{
-            "externalId": 888,
-            "customer": "אבי ובניו",
-            "type": "טיפול שנתי",
-            "description": "",
-            "vehicle": "מכסת טורו '19",
-            "address": "סוקולוב 60, הרצליה",
-            "contacts": [{"name": "בני", "phone": "04-6490641"}, {"name": "אלי"}],
-            "driverEmail": "avi.cohen@gmail.com",
-            "scheduledDate": "2023-08-03",
-            "scheduledOrder": 1
-        }, {
-            "externalId": 7,
-            "customer": "ימית 2000",
-            "type": "תקלה",
-            "description": "לא מניע",
-            "vehicle": "קלאבקאר",
-            "address": "ימית 2000, חולון",
-            "contacts": [{"name": "בני", "phone": "04-6490641"}],
-            "driverEmail": "avi.cohen@gmail.com",
-            "scheduledDate": "2023-08-03",
-            "scheduledOrder": 2
-        }]
-    }
+    Add or update a batch of calls.
+
+    Usage:
+    POST /api/calls/add
+    Payload example is available at add_calls_payload_example API.
     """
 
     user = get_user(request)
@@ -103,16 +114,17 @@ def addCalls(request):
 
     if not has_scope(request, UPDATE_OTHER_CALLS_PERMISSION):
         drivers_email = set(
-            [requested_call["driverEmail"] for requested_call in requested_calls]
+            [requested_call["driver_email"] for requested_call in requested_calls]
         )
         if any([driver_email != user.email for driver_email in drivers_email]):
             return unauthorizedResponse(
-                "You cannot add calls for others. Please use only your own email address."
+                request=request,
+                message="You cannot add calls for others. Please use only your own email address.",
             )
 
     calls = []
     for requested_call in requested_calls:
-        call = Call.objects.filter(externalId=requested_call["externalId"])
+        call = Call.objects.filter(external_id=requested_call["external_id"])
         requested_contacts = requested_call.pop("contacts")
 
         if call:
@@ -141,5 +153,36 @@ def addCalls(request):
 @api_exception_handler
 @api_view([HTTPMethod.GET.name])
 @api_requires_scope(ADD_MY_CALLS_PERMISSION)
-def addCallsPayloadExample(request):
-    return Response(addCalls.__doc__)
+def add_calls_payload_example(request):
+    """
+    Get payload example for add_calls API.
+    """
+
+    payload_example = """
+    {
+        "calls": [{
+            "external_id": 888,
+            "customer": "אבי ובניו",
+            "type": "טיפול שנתי",
+            "description": "",
+            "vehicle": "מכסת טורו '19",
+            "address": "סוקולוב 60, הרצליה",
+            "contacts": [{"name": "בני", "phone": "04-6490641"}, {"name": "אלי"}],
+            "driver_email": "avi.cohen@gmail.com",
+            "scheduled_date": "2023-08-03",
+            "scheduled_order": 1
+        }, {
+            "external_id": 7,
+            "customer": "ימית 2000",
+            "type": "תקלה",
+            "description": "לא מניע",
+            "vehicle": "קלאבקאר",
+            "address": "ימית 2000, חולון",
+            "contacts": [{"name": "בני", "phone": "04-6490641"}],
+            "driver_email": "avi.cohen@gmail.com",
+            "scheduled_date": "2023-08-03",
+            "scheduled_order": 2
+        }]
+    }
+    """
+    return Response(payload_example)

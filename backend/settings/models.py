@@ -6,6 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 class SystemSetting:
+    """
+    Global manageable application setting, represented by an integer value.
+    """
+
     ALL_SETTINGS = dict()
 
     def __init__(self, key: str, default_value: int, description: str) -> None:
@@ -16,15 +20,15 @@ class SystemSetting:
         self.ALL_SETTINGS[self.key] = self
 
     @property
-    def current_value(self):
+    def current_value(self) -> int:
         if not Setting.get(self.key):
             self.update_setting(new_value=self.default_value)
         return Setting.get(self.key)
 
-    def __delete_setting(self):
+    def __delete_setting(self) -> None:
         Setting.objects.filter(name=self.key).delete()
 
-    def update_setting(self, new_value: int):
+    def update_setting(self, new_value: int) -> None:
         self.__delete_setting()
 
         setting_obj = Setting(

@@ -1,9 +1,10 @@
 from functools import wraps
 from django.http import JsonResponse
 from traceback import format_exc
+from typing import Callable
 
 
-def api_exception_handler(f):
+def api_exception_handler(f: Callable) -> Callable:
     """
     Catch any exception an return appropriate API response, in JSON format.
     """

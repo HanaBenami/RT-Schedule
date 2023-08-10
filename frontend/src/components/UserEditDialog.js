@@ -53,7 +53,7 @@ function UserEditDialog({
     useEffect(() => {
         if (user) {
             setPermissions(
-                user.permissions.map((permission) => permission.scope_name)
+                user.permissions.map((permission) => permission.name)
             );
         } else {
             setPermissions(USER_DEFAULT_PERMISSIONS);
@@ -239,24 +239,6 @@ function UserEditDialog({
                         </Form.Group>
 
                         <Form.Group as={Row}>
-                            <Form.Label column sm={4}>
-                                התחברות אחרונה
-                            </Form.Label>
-                            <Col sm={8} className="col-form-label">
-                                {user && <UserLastLogin user={user} />}
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Row}>
-                            <Form.Label column sm={4}>
-                                תאריך הוספה
-                            </Form.Label>
-                            <Col sm={8} className="col-form-label">
-                                {user && user.created_at}
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Row}>
                             <Col className="col-form-label">
                                 <Form.Check
                                     reverse
@@ -287,6 +269,28 @@ function UserEditDialog({
                                 />
                             </Col>
                         </Form.Group>
+
+                        {user && (
+                            <Form.Group as={Row}>
+                                <Form.Label column sm={4}>
+                                    התחברות אחרונה
+                                </Form.Label>
+                                <Col sm={8} className="col-form-label">
+                                    {user && <UserLastLogin user={user} />}
+                                </Col>
+                            </Form.Group>
+                        )}
+
+                        {user && (
+                            <Form.Group as={Row}>
+                                <Form.Label column sm={4}>
+                                    תאריך הוספה
+                                </Form.Label>
+                                <Col sm={8} className="col-form-label">
+                                    {user && user.created_at}
+                                </Col>
+                            </Form.Group>
+                        )}
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

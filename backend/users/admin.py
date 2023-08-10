@@ -5,7 +5,7 @@ from .models import User, Permission
 
 @admin.register(Permission)
 class PermissionAdmin(admin.ModelAdmin):
-    list_display = ("scope_name",)
+    list_display = ("name",)
 
 
 @admin.register(User)

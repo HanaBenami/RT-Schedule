@@ -11,10 +11,10 @@ echo "Create a superuser"
 python manage.py initadmin
 
 echo "Create application users"
-python manage.py initremoteusers
+python manage.py initlocalusers
 
 echo "Starting gunicorn server in production mode"
-gunicorn base.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4  # TODO: read about guincorn & decide about number of workers/threads
+gunicorn base.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
 
 # echo "Starting gunicorn server in DEBUG mode"
 # gunicorn server.wsgi --bind 0.0.0.0:8000 --workers 1 --threads 1 --log-level debug

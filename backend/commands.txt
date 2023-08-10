@@ -1,3 +1,4 @@
 ./manage.py makemigrations
 ./manage.py migrate
 DJANGO_DEBUG=True ./manage.py runserver
+sudo docker system prune -a

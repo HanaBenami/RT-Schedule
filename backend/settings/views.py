@@ -17,7 +17,13 @@ logger = logging.getLogger(__name__)
 @api_exception_handler
 @api_view([HTTPMethod.GET.name])
 @permission_classes([AllowAny])
-def getRoutes(request):
+def get_routes(request) -> Response:
+    """
+    Get all routes available for this module.
+
+    Usage:
+    GET /api/settings/
+    """
     routes = [
         "/api/settings/list",
         "/api/settings/update/<key>",
@@ -28,7 +34,13 @@ def getRoutes(request):
 @api_exception_handler
 @api_view([HTTPMethod.GET.name])
 @api_requires_scope(READ_SYSTEM_SETTINGS_PERMISSION)
-def getSystemSettings(request):
+def get_system_settings(request) -> Response:
+    """
+    Get a list of all the system settings and thier current values.
+
+    Usage:
+    GET /api/settings/list
+    """
     systemSettings = SystemSetting.ALL_SETTINGS.values()
     seializer = SystemSettingSerializer(systemSettings, many=True)
     return Response(seializer.data)
@@ -37,7 +49,14 @@ def getSystemSettings(request):
 @api_exception_handler
 @api_view([HTTPMethod.POST.name])
 @api_requires_scope(UPDATE_SYSTEM_SETTINGS_PERMISSION)
-def updateSetting(request, setting_key):
+def update_setting(request, setting_key: str) -> Response:
+    """
+    Update the value of a system setting.add()
+
+    Usage:
+    POST /api/settings/update/DELETE_CALL_X_DAYS_POST_SCHEDULED_ORDER
+    {"new_value":"40"}
+    """
     system_setting: SystemSetting = SystemSetting.ALL_SETTINGS[setting_key]
     user = get_user(request)
     new_value_key = "new_value"

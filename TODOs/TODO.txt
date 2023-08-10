@@ -1,20 +1,16 @@
 git readme VX
 
-code refactoring
-- python:
--- users
---- auth0User class
--- calls
--- settings
-- react:
--- ?
+frontend code refactoring:
+- review everything
+- https://stackoverflow.com/questions/27928372/react-router-urls-dont-work-when-refreshing-or-writing-manually
+- js classes ?
+- TypeScript ?
 
-tests ?
+tests ? > add coverage to readme
 
-Deployment on aws > add to readme
+AWS:
+deployment
+add build status, app status and link to readme
 dashboard
 centralized logs
-
-TypeScript
-
 ssl certificate

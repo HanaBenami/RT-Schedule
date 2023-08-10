@@ -1,7 +1,7 @@
 {
   "calls": [
     {
-      "externalId": 888,
+      "external_id": 888,
       "customer": "אבי ובניו",
       "type": "טיפול שנתי",
       "description": "",
@@ -16,12 +16,12 @@
           "name": "אלי"
         }
       ],
-      "driverEmail": "hana.oliver@mail.com",
-      "scheduledDate": "2023-08-06",
-      "scheduledOrder": 1
+      "driver_email": "hana.oliver@mail.com",
+      "scheduled_date": "2023-08-06",
+      "scheduled_order": 1
     },
     {
-      "externalId": 7,
+      "external_id": 7,
       "customer": "ימית 2000",
       "type": "תקלה",
       "description": "לא מניע",
@@ -33,9 +33,9 @@
           "phone": "04-6490641"
         }
       ],
-      "driverEmail": "hana.oliver@mail.com",
-      "scheduledDate": "2023-08-06",
-      "scheduledOrder": 2
+      "driver_email": "hana.oliver@mail.com",
+      "scheduled_date": "2023-08-06",
+      "scheduled_order": 2
     }
   ]
 }

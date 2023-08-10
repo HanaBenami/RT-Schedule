@@ -21,7 +21,13 @@ logger = logging.getLogger(__name__)
 @api_exception_handler
 @api_view([HTTPMethod.GET.name])
 @permission_classes([AllowAny])
-def getRoutes(request):
+def get_routes(request) -> Response:
+    """
+    Get all routes available for this module.
+
+    Usage:
+    GET /api/users/
+    """
     routes = [
         "/api/users/list",
         "/api/users/create/",
@@ -33,7 +39,13 @@ def getRoutes(request):
 @api_exception_handler
 @api_requires_scope(READ_USERS_PERMISSION)
 @api_view([HTTPMethod.GET.name])
-def getUsers(request):
+def get_users(request) -> Response:
+    """
+    Returns details of all the users.
+
+    Usage:
+    GET /api/users/list/
+    """
     users = User.objects.all()
     seializer = UserSerializer(users, many=True)
     return Response(seializer.data)
@@ -42,12 +54,27 @@ def getUsers(request):
 @api_exception_handler
 @api_view([HTTPMethod.POST.name])
 @api_requires_scope(UPDATE_USERS_PERMISSION)
-def updateUser(request, pk):
+def update_user(request, pk) -> Response:
+    """
+    Update the user with the given data.
+    The payload might include the following fields: first_name, last_name, email, is_active, is_temporary and permissions.
+
+    Usage:
+    POST /api/users/update/3
+    {
+        "first_name":"שחר",
+        "last_name":"אוליבר",
+        "email":"xxx@gmail.com",
+        "is_active":true,
+        "is_temporary":true,
+        "permissions":["read:other_calls","add:my_calls","update:my_calls","read:my_calls","read:users","read:settings","add:other_calls"]
+    }
+    """
     request_user = get_user(request)
     user_to_update = User.objects.get(pk=pk)
     logger.debug(
         f"{request_user} request to update {user_to_update}."
-        f"\nCurrent data: {user_to_update.list_user_details()}"
+        f"\nCurrent data: {user_to_update.get_details()}"
         f"\nRequest data: {request.data}"
     )
     for key, value in request.data.items():
@@ -66,41 +93,59 @@ def updateUser(request, pk):
 @api_exception_handler
 @api_view([HTTPMethod.POST.name])
 @api_requires_scope(ADD_USERS_PERMISSION)
-def createUser(request):
+def create_user(request) -> Response:
+    """
+    Create a temporary active user with the given data.
+    The payload should include the following fields: first_name, last_name and email.
+    It might also include: is_active, is_temporary and permissions.
+
+    Usage:
+    POST /api/users/create/
+    {
+        "first_name":"שחר",
+        "last_name":"אוליבר",
+        "email":"xxx@gmail.com",
+        "is_active":true,
+        "is_temporary":true,
+        "permissions":["read:my_calls","read:other_calls","read:users","read:settings","update:my_calls","add:my_calls"]
+    }
+    """
     request_user = get_user(request)
     logger.debug(
         f"{request_user} request to create a new user."
         f"\nRequest data: {request.data}"
     )
-    for key in request.data.keys()():
+    for key in request.data.keys():
         if key not in User.UPDATEABLE_FIELDS:
             raise Exception(f"The {key} of the user cannot be changed")
+    permissions = request.data.pop("permissions", None)
     new_user = User.objects.create(**request.data)
     new_user.save()
+    if permissions:
+        new_user.permissions = Permission.DEFAULT_PERMISSIONS
+        new_user.save()
     logger.info(f"The user {new_user} was created by {request_user}")
     seializer = UserSerializer(new_user, many=False)
     return Response(seializer.data)
-
-
-def lll(num):
-    from functools import wraps
-
-    def decorator(f):
-        @wraps(f)
-        def decorated(*args, **kwargs):
-            print(f, num)
-            return f(*args, **kwargs)
-
-        return decorated
-
-    return decorator
 
 
 @api_exception_handler
 @api_view([HTTPMethod.POST.name])
 @authentication_classes([])
 @permission_classes([])
-def createBasicUser(request):
+def create_basic_user(request) -> Response:
+    """
+    Create a temporary active user with the given data.
+    The payload should include the following fields: first_name, last_name and email.
+
+    Usage:
+    POST /api/users/create/basic/
+    {
+        "first_name":"שחר",
+        "last_name":"אוליבר",
+        "email":"xxx@gmail.com",
+    }
+    """
     logger.debug(
         f"A request to create a new temporary user was recieved."
         f"\nRequest data: {request.data}"

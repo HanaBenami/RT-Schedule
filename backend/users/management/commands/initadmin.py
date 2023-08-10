@@ -8,6 +8,11 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
+    help = """
+        Looking for superuser account. 
+        If there is no superuser account yet, create it, with pre-defined default username and password.
+    """
+
     def handle(self, *args, **options):
         superusers = User.objects.filter(is_superuser=True)
         if not superusers:

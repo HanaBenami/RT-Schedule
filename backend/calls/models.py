@@ -16,29 +16,29 @@ class Call(models.Model):
         description="כמה ימים לאחר תאריך שיבוץ קריאה למחוק קריאה שבוצעה? (0 = לעולם לא)",
     )
 
-    internalId = models.AutoField(primary_key=True, editable=False)
-    externalId = models.IntegerField(null=False, unique=True)
+    internal_id = models.AutoField(primary_key=True, editable=False)
+    external_id = models.IntegerField(null=False, unique=True)
     customer = models.CharField(max_length=200, null=False, blank=False)
     type = models.CharField(max_length=50, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     vehicle = models.CharField(max_length=100, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    isDone = models.BooleanField(default=False)
-    addedAt = models.DateTimeField(auto_now_add=True)
-    scheduledDate = models.DateField(auto_now=False)
-    scheduledOrder = models.PositiveIntegerField(null=False, blank=False)
-    driverEmail = models.EmailField(
+    is_done = models.BooleanField(default=False)
+    added_at = models.DateTimeField(auto_now_add=True)
+    scheduled_date = models.DateField(auto_now=False)
+    scheduled_order = models.PositiveIntegerField(null=False, blank=False)
+    driver_email = models.EmailField(
         max_length=100,
         null=False,
         blank=False,
         unique=False,
     )
-    driverNotes = models.TextField(null=True, blank=True)
+    driver_notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"call #{self.externalId}"
+        return f"call #{self.external_id}"
 
-    def list_call_details(self):
+    def get_details(self):
         return {
             key: value
             for (key, value) in self.__dict__.items()
@@ -47,7 +47,7 @@ class Call(models.Model):
 
     @property
     def driverUser(self):
-        users = User.objects.filter(email=self.driverEmail)
+        users = User.objects.filter(email=self.driver_email)
         return users[0] if users else None
 
     @classmethod
@@ -57,9 +57,10 @@ class Call(models.Model):
         if days:
             logger.debug(f"Going to delete all the calls older than {days} days")
             calls_to_delete = cls.objects.filter(
-                scheduledDate__lt=(datetime.now() + timedelta(days=-days)), isDone=True
+                scheduled_date__lt=(datetime.now() + timedelta(days=-days)),
+                is_done=True,
             )
-            deleted_calls_external_id = [call.externalId for call in calls_to_delete]
+            deleted_calls_external_id = [call.external_id for call in calls_to_delete]
             calls_to_delete.delete()
             logger.info(
                 f"{len(deleted_calls_external_id)} calls were deleted automatically: {deleted_calls_external_id}"

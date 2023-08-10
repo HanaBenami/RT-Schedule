@@ -9,12 +9,18 @@ import RestrictedComponent from "../components/RestrictedComponent";
 import {
     READ_MY_CALLS_PERMISSION,
     READ_OTHER_CALLS_PERMISSION,
+    UPDATE_MY_CALLS_PERMISSION,
+    UPDATE_OTHER_CALLS_PERMISSION,
 } from "../constants/userAuthConstants";
 import useAuth from "../auth/useAuth";
 import UserPicker from "../components/UserPicker";
 
 function ScheduleScreen() {
-    const { user } = useAuth();
+    const { user, permissions } = useAuth();
+    const hasPermissionToUpdateCallsAssignedToSelf =
+        permissions && permissions.includes(UPDATE_MY_CALLS_PERMISSION);
+    const hasPermissionToUpdateCallsAssignToOthers =
+        permissions && permissions.includes(UPDATE_OTHER_CALLS_PERMISSION);
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedDriverEmail, setSelectedDriverEmail] = useState(null);
@@ -51,6 +57,12 @@ function ScheduleScreen() {
                     <ScheduledCallsGrid
                         userEmail={selectedDriverEmail}
                         date={selectedDate}
+                        readOnly={
+                            (selectedDriverEmail === user.email &&
+                                !hasPermissionToUpdateCallsAssignedToSelf) ||
+                            (selectedDriverEmail !== user.email &&
+                                !hasPermissionToUpdateCallsAssignToOthers)
+                        }
                     />
                 </Row>
             </Container>

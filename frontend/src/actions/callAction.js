@@ -42,11 +42,11 @@ export const updateCall = (call) => async (dispatch, getState) => {
         const config = await getApiAuthConfig(dispatch, getState);
 
         const { data } = await axios.post(
-            `/api/calls/update/${call.externalId}`,
+            `/api/calls/update/${call.external_id}`,
             {
-                externalId: call.externalId,
-                driverNotes: call.driverNotes,
-                isDone: call.isDone,
+                external_id: call.external_id,
+                driver_notes: call.driver_notes,
+                is_done: call.is_done,
             },
             config
         );

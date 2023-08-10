@@ -8,27 +8,31 @@ class PermissionSerializer(serializers.ModelSerializer):
         model = Permission
         fields = (
             "pk",
-            "scope_name",
+            "name",
         )
 
 
 class UserSerializer(serializers.ModelSerializer):
+    nickname = serializers.SerializerMethodField()
     last_login = serializers.SerializerMethodField()
     last_login_update = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
     permissions = PermissionSerializer(many=True)
 
-    def get_date(self, user, date_attribute_name):
-        value = user.__getattribute__(date_attribute_name)
-        return value.strftime("%d/%m/%y") if value else None
+    def get_nickname(self, user: User):
+        return user.name
 
-    def get_last_login(self, user):
+    def get_date(self, user: User, date_attribute_name: str):
+        value = user.__getattribute__(date_attribute_name)
+        return value.strftime("%d/%m/%y %H:%M") if value else None
+
+    def get_last_login(self, user: User):
         return self.get_date(user, "last_login")
 
-    def get_last_login_update(self, user):
+    def get_last_login_update(self, user: User):
         return self.get_date(user, "last_login_update")
 
-    def get_created_at(self, user):
+    def get_created_at(self, user: User):
         return self.get_date(user, "created_at")
 
     class Meta:
