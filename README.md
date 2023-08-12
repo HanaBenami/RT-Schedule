@@ -27,9 +27,10 @@ A responsive web application for drivers and delivery person
 
 ## Screenshots
 
-![image](https://github.com/HanaBenami/RT-Schedule/assets/42554587/ab7e52dd-1883-4727-80f5-18aee0fed9a1)
-![image](https://github.com/HanaBenami/RT-Schedule/assets/42554587/66ceb0e4-5e79-4f21-9d1a-b32ff7634f37)
-![image](https://github.com/HanaBenami/RT-Schedule/assets/42554587/2c8e0f28-a90e-4ae2-a849-4eadc61ca84c)
+![image](/screenshots/add_calls.png)
+![image](/screenshots/schedule.png)
+![image](/screenshots/user_management.png)
+
 
 ## Online demo
 
