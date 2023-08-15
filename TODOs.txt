@@ -1,12 +1,37 @@
 git readme VX
 
+
 frontend code refactoring:
-- review everything
-- https://stackoverflow.com/questions/27928372/react-router-urls-dont-work-when-refreshing-or-writing-manually
-- js classes ?
+
+- review everything VX - files left:
+
+-- components:
+frontend/src/components/Footer.js 
+frontend/src/components/Header.js 
+frontend/src/components/ConfirmDialog.js 
+frontend/src/components/ScheduledCallsGrid.js 
+frontend/src/components/CallDataTable.js 
+frontend/src/components/ContactsTable.js 
+frontend/src/components/DatePicker.js 
+frontend/src/components/SettingForm.js 
+frontend/src/components/UserEditDialog.js 
+frontend/src/components/UserLastLogin.js 
+frontend/src/components/UserPicker.js 
+frontend/src/components/UsersTable.js 
+
+-- screens:
+frontend/src/screens/AddCallsScreen.js
+frontend/src/screens/DemoScreen.js
+frontend/src/screens/ScheduleScreen.js
+frontend/src/screens/SettingsScreen.js
+frontend/src/screens/UsersScreen.js
+frontend/src/screens/WelcomeScreen.js
+
 - TypeScript ?
 
+
 tests ? > add coverage to readme
+
 
 AWS:
 deployment

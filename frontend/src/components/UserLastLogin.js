@@ -9,14 +9,14 @@ function UserLastLogin({ user }) {
                     trigger="hover"
                     placement="auto"
                     overlay={
-                        <Tooltip key={`last_login_tooltip_${user.email}`}>
+                        <Tooltip key={`lastLoginTooltip.${user.email}`}>
                             עודכן לאחרונה ב-
-                            {user.last_login_update}
+                            {user.lastLoginUpdate}
                         </Tooltip>
                     }
                 >
                     <span>
-                        {user.last_login ? user.last_login : "טרם התחבר למערכת"}
+                        {user.lastLogin ? user.lastLogin : "טרם התחבר למערכת"}
                         <Icon icon="fa-question-circle" />
                     </span>
                 </OverlayTrigger>

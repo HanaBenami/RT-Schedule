@@ -15,8 +15,40 @@ import {
     CALL_ADD_SUCCESS,
 } from "../constants/callConstants";
 
+import Serializer from "../classes/serializer";
 import serializeError from "../utils/serializeError";
 import { getApiAuthConfig } from "./userAuthActions";
+
+const callSerializer = new Serializer({
+    id: "external_id",
+    customer: "customer",
+    type: "type",
+    description: "description",
+    vehicle: "vehicle",
+    address: "address",
+    contacts: "contacts",
+    driverEmail: "driver_email",
+    scheduledDate: "scheduled_date",
+    scheduledOrder: "scheduled_order",
+    driverNotes: "driver_notes",
+    isDone: "is_done",
+});
+
+const contactSerializer = new Serializer({
+    phone: "phone",
+    name: "name",
+});
+
+const deserializedCallWithContacts = (serializedCall) => {
+    let call = callSerializer.deserialize(serializedCall);
+    call = {
+        ...call,
+        contacts: call.contacts.map((contact) =>
+            contactSerializer.deserialize(contact)
+        ),
+    };
+    return call;
+};
 
 export const listCalls = () => async (dispatch, getState) => {
     try {
@@ -26,7 +58,12 @@ export const listCalls = () => async (dispatch, getState) => {
 
         const { data } = await axios.get("/api/calls/list", config);
 
-        dispatch({ type: CALL_LIST_SUCCESS, payload: data });
+        const calls = data.map((callData) =>
+            deserializedCallWithContacts(callData)
+        );
+        calls.sort((a, b) => (a.id < b.id ? -1 : 1));
+
+        dispatch({ type: CALL_LIST_SUCCESS, payload: calls });
     } catch (error) {
         dispatch({
             type: CALL_LIST_FAIL,
@@ -42,12 +79,8 @@ export const updateCall = (call) => async (dispatch, getState) => {
         const config = await getApiAuthConfig(dispatch, getState);
 
         const { data } = await axios.post(
-            `/api/calls/update/${call.external_id}`,
-            {
-                external_id: call.external_id,
-                driver_notes: call.driver_notes,
-                is_done: call.is_done,
-            },
+            `/api/calls/update/${call.id}`,
+            callSerializer.serialize(call, ["id", "driverNotes", "isDone"]),
             config
         );
 
@@ -70,7 +103,11 @@ export const addCalls = (jsonInput) => async (dispatch, getState) => {
 
         const { data } = await axios.post(`/api/calls/add`, jsonInput, config);
 
-        dispatch({ type: CALL_ADD_SUCCESS, payload: data });
+        const calls = data.map((callData) =>
+            deserializedCallWithContacts(callData)
+        );
+
+        dispatch({ type: CALL_ADD_SUCCESS, payload: calls });
 
         dispatch(listCalls());
     } catch (error) {

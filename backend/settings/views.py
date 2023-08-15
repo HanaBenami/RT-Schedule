@@ -55,11 +55,11 @@ def update_setting(request, setting_key: str) -> Response:
 
     Usage:
     POST /api/settings/update/DELETE_CALL_X_DAYS_POST_SCHEDULED_ORDER
-    {"new_value":"40"}
+    {"value": "40"}
     """
     system_setting: SystemSetting = SystemSetting.ALL_SETTINGS[setting_key]
     user = get_user(request)
-    new_value_key = "new_value"
+    new_value_key = "value"
     if not request.data.keys() == [new_value_key]:
         logger.warning(
             f"System setting update request should include only the key {new_value_key}"

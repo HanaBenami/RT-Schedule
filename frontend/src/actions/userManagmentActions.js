@@ -12,8 +12,23 @@ import {
     BASIC_USER_CREATE_FAIL,
 } from "../constants/userManagmentConstants";
 
+import Serializer from "../classes/serializer";
 import serializeError from "../utils/serializeError";
 import { getApiAuthConfig } from "./userAuthActions";
+
+const userSerializer = new Serializer({
+    pk: "pk",
+    firstName: "first_name",
+    lastName: "last_name",
+    nickname: "nickname",
+    email: "email",
+    isActive: "is_active",
+    isTemporary: "is_temporary",
+    permissions: "permissions",
+    createdAt: "created_at",
+    lastLogin: "last_login",
+    lastLoginUpdate: "last_login_update",
+});
 
 export const listUsers = () => async (dispatch, getState) => {
     try {
@@ -22,10 +37,14 @@ export const listUsers = () => async (dispatch, getState) => {
         const config = await getApiAuthConfig(dispatch, getState);
 
         const { data } = await axios.get("/api/users/list", config);
-        data.sort((a, b) => a.last_name.localeCompare(b.last_name));
-        data.sort((a, b) => a.first_name.localeCompare(b.first_name));
 
-        dispatch({ type: USER_LIST_SUCCESS, payload: data });
+        const users = data.map((userData) =>
+            userSerializer.deserialize(userData)
+        );
+        users.sort((a, b) => a.lastName.localeCompare(b.lastName));
+        users.sort((a, b) => a.firstName.localeCompare(b.firstName));
+
+        dispatch({ type: USER_LIST_SUCCESS, payload: users });
     } catch (error) {
         dispatch({
             type: USER_LIST_FAIL,
@@ -42,14 +61,14 @@ export const createOrUpdateUser = (user) => async (dispatch, getState) => {
 
         const { data } = await axios.post(
             user.pk ? `/api/users/update/${user.pk}` : `/api/users/create/`,
-            {
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-                is_active: user.is_active,
-                is_temporary: user.is_temporary,
-                permissions: user.permissions,
-            },
+            userSerializer.serialize(user, [
+                "firstName",
+                "lastName",
+                "email",
+                "isActive",
+                "isTemporary",
+                "permissions",
+            ]),
             config
         );
 
@@ -70,15 +89,13 @@ export const createBasicUser = (user) => async (dispatch, getState) => {
 
         const { data } = await axios.post(
             `/api/users/create/basic/`,
-            {
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-            },
+            userSerializer.serialize(user, ["firstName", "lastName", "email"]),
             { headers: { "Content-type": "application/json" } }
         );
 
         dispatch({ type: BASIC_USER_CREATE_SUCCESS, payload: data });
+
+        dispatch(listUsers());
     } catch (error) {
         dispatch({
             type: BASIC_USER_CREATE_FAIL,

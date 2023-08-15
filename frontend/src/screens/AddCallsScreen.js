@@ -22,13 +22,13 @@ import Message from "../components/Message";
 
 function AddCallsScreen() {
     const dispatch = useDispatch();
-    const addCallExample = useSelector((state) => state.addCallExample);
+    const addCallExample = useSelector((state) => state.addCallsExample);
     const {
         jsonExample,
         loading: jsonExampleLoading,
         error: jsonExampleError,
     } = addCallExample;
-    const addCall = useSelector((state) => state.addCall);
+    const addCall = useSelector((state) => state.addCalls);
     const {
         loading: addCallLoading,
         error: addCallError,

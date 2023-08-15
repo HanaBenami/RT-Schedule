@@ -19,11 +19,11 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
         calls
             .filter(
                 (call) =>
-                    call.driver_email === userEmail &&
-                    new Date(Date.parse(call.scheduled_date)).toDateString() ===
+                    call.driverEmail === userEmail &&
+                    new Date(Date.parse(call.scheduledDate)).toDateString() ===
                         date.toDateString()
             )
-            .sort((a, b) => (a.order < b.order ? -1 : 1));
+            .sort((a, b) => (a.scheduledOrder < b.scheduledOrder ? -1 : 1));
 
     const [activeCallKey, setActiveCallKey] = useState();
 
@@ -36,9 +36,9 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
             relevantCalls &&
             0 < relevantCalls.length &&
             undefined ===
-                relevantCalls.find((call) => call.external_id === activeCallKey)
+                relevantCalls.find((call) => call.id === activeCallKey)
         ) {
-            setActiveCallKey(relevantCalls[0].external_id);
+            setActiveCallKey(relevantCalls[0].id);
         }
     }, [relevantCalls, activeCallKey]);
 
@@ -74,8 +74,8 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
                         relevantCalls.map((call) => {
                             return (
                                 <Accordion.Item
-                                    eventKey={call.external_id}
-                                    key={call.external_id}
+                                    eventKey={call.id}
+                                    key={call.id}
                                 >
                                     <Accordion.Header>
                                         <font
@@ -84,20 +84,20 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
                                             }}
                                         >
                                             <strong>
-                                                {call.scheduled_order}
+                                                {call.scheduledOrder}
                                                 &nbsp;&nbsp;
                                             </strong>
                                         </font>
                                         <font
                                             style={{
-                                                textDecoration: call.is_done
+                                                textDecoration: call.isDone
                                                     ? "line-through"
                                                     : "none",
                                             }}
                                         >
                                             {call.customer}
                                         </font>
-                                        {call.is_done && (
+                                        {call.isDone && (
                                             <Icon icon="fa-check fa-lg" />
                                         )}
                                     </Accordion.Header>

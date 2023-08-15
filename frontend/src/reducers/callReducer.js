@@ -13,12 +13,16 @@ import {
     CALL_ADD_FAIL,
 } from "../constants/callConstants";
 
-export const callsListReducer = (state = { calls: [] }, action) => {
+export const callsListReducer = (state = {}, action) => {
     switch (action.type) {
         case CALL_LIST_REQUEST:
-            return { loading: true, calls: [] };
+            return { ...state, loading: true };
         case CALL_LIST_SUCCESS:
-            return { loading: false, success: true, calls: action.payload };
+            return {
+                loading: false,
+                success: true,
+                calls: action.payload,
+            };
         case CALL_LIST_FAIL:
             return { loading: false, error: action.payload };
         default:
@@ -26,12 +30,16 @@ export const callsListReducer = (state = { calls: [] }, action) => {
     }
 };
 
-export const callUpdateReducer = (state = { call: null }, action) => {
+export const callUpdateReducer = (state = {}, action) => {
     switch (action.type) {
         case CALL_UPDATE_REQUEST:
-            return { loading: true };
+            return { ...state, loading: true };
         case CALL_UPDATE_SUCCESS:
-            return { loading: false, success: true, call: action.payload };
+            return {
+                loading: false,
+                success: true,
+                call: action.payload,
+            };
         case CALL_UPDATE_FAIL:
             return { loading: false, error: action.payload };
         default:
@@ -39,12 +47,16 @@ export const callUpdateReducer = (state = { call: null }, action) => {
     }
 };
 
-export const addCallReducer = (state = { calls: [] }, action) => {
+export const addCallsReducer = (state = {}, action) => {
     switch (action.type) {
         case CALL_ADD_REQUEST:
-            return { loading: true };
+            return { ...state, loading: true };
         case CALL_ADD_SUCCESS:
-            return { loading: false, success: true, calls: action.payload };
+            return {
+                loading: false,
+                success: true,
+                calls: action.payload,
+            };
         case CALL_ADD_FAIL:
             return { loading: false, error: action.payload };
         default:
@@ -52,13 +64,13 @@ export const addCallReducer = (state = { calls: [] }, action) => {
     }
 };
 
-export const addCallExampleReducer = (
+export const addCallsExampleReducer = (
     state = { jsonExample: null },
     action
 ) => {
     switch (action.type) {
         case CALL_ADD_EXAMPLE_REQUEST:
-            return { loading: true };
+            return { ...state, loading: true };
         case CALL_ADD_EXAMPLE_SUCCESS:
             return {
                 loading: false,

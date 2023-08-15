@@ -5,7 +5,6 @@ import jwt from "jwt-decode";
 
 import AuthContext from "./AuthContext.js";
 import { saveUserInfo, resetUserInfo } from "../actions/userAuthActions.js";
-// import { login, logout } from "../actions/userAuthActions.js";
 
 export default function AuthProvider({ children }) {
     const dispatch = useDispatch();
@@ -82,14 +81,13 @@ export default function AuthProvider({ children }) {
             if (auth0IsAuthenticated) {
                 const accessToken = await getAccessToken();
                 dispatch(saveUserInfo(user, accessToken));
-                setInternalIsLoading(false);
                 setInternalIsAuthenticated(true);
             } else {
                 dispatch(resetUserInfo());
                 setAccessToken(null);
-                setInternalIsLoading(false);
                 setInternalError(null);
             }
+            setInternalIsLoading(false);
         }
 
         handleLoginOrLogout();

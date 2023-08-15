@@ -22,7 +22,7 @@ function SettingForm({ setting }) {
     const [editMode, setEditMode] = useState(false);
     const [dataChanges, setDataChanges] = useState(false);
     const [updateRequested, setUpdateRequested] = useState(false);
-    const [value, setValue] = useState(setting.current_value);
+    const [value, setValue] = useState(setting.value);
 
     const dispatch = useDispatch();
     const settingUpdate = useSelector((state) => state.settingUpdate);
@@ -36,7 +36,7 @@ function SettingForm({ setting }) {
 
     useEffect(() => {
         if (!editMode) {
-            setValue(setting.current_value);
+            setValue(setting.value);
         }
     }, [setting, editMode]);
 
@@ -96,7 +96,7 @@ function SettingForm({ setting }) {
                                             dispatch(
                                                 updateSetting({
                                                     ...setting,
-                                                    new_value: value,
+                                                    value: value,
                                                 })
                                             );
                                         }}

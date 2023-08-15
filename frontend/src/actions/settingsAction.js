@@ -9,8 +9,15 @@ import {
     SETTING_UPDATE_SUCCESS,
 } from "../constants/settingsConstants";
 
+import Serializer from "../classes/serializer";
 import serializeError from "../utils/serializeError";
 import { getApiAuthConfig } from "./userAuthActions";
+
+const settingSerializer = new Serializer({
+    key: "key",
+    description: "description",
+    value: "value",
+});
 
 export const listSettings = () => async (dispatch, getState) => {
     try {
@@ -20,7 +27,11 @@ export const listSettings = () => async (dispatch, getState) => {
 
         const { data } = await axios.get("/api/settings/list", config);
 
-        dispatch({ type: SETTINGS_LIST_SUCCESS, payload: data });
+        const settings = data.map((settingData) =>
+            settingSerializer.deserialize(settingData)
+        );
+
+        dispatch({ type: SETTINGS_LIST_SUCCESS, payload: settings });
     } catch (error) {
         dispatch({
             type: SETTINGS_LIST_FAIL,
@@ -37,13 +48,12 @@ export const updateSetting = (setting) => async (dispatch, getState) => {
 
         const { data } = await axios.post(
             `/api/settings/update/${setting.key}`,
-            {
-                new_value: setting.new_value,
-            },
+            settingSerializer.serialize(setting, ["value"]),
             config
         );
+        setting = settingSerializer.deserialize(data);
 
-        dispatch({ type: SETTING_UPDATE_SUCCESS, payload: data });
+        dispatch({ type: SETTING_UPDATE_SUCCESS, payload: setting });
 
         dispatch(listSettings());
     } catch (error) {

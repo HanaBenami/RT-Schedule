@@ -77,19 +77,19 @@ function UsersTable({ users, onUserEdit, onUserAddition }) {
             },
         },
         {
-            dataField: "first_name",
+            dataField: "firstName",
             text: "שם פרטי",
             sort: true,
             filter: customTextFilter,
         },
         {
-            dataField: "last_name",
+            dataField: "lastName",
             text: "שם משפחה",
             sort: true,
             filter: customTextFilter,
         },
         {
-            dataField: "is_active",
+            dataField: "isActive",
             text: "פעיל",
             formatter: booleanColumnFormatter,
             filter: selectFilter({
@@ -102,7 +102,7 @@ function UsersTable({ users, onUserEdit, onUserAddition }) {
             }),
         },
         {
-            dataField: "is_temporary",
+            dataField: "isTemporary",
             text: "זמני",
             formatter: booleanColumnFormatter,
             filter: selectFilter({
@@ -114,14 +114,14 @@ function UsersTable({ users, onUserEdit, onUserAddition }) {
             }),
         },
         {
-            dataField: "last_login",
+            dataField: "lastLogin",
             text: "התחברות אחרונה",
             formatter: lastLoginColumnFormatter,
             sort: true,
             hidden: true,
         },
         {
-            dataField: "created_at",
+            dataField: "createdAt",
             text: "תאריך הוספה",
             sort: true,
             hidden: true,

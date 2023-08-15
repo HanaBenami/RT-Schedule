@@ -1,6 +1,6 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -13,7 +13,7 @@ import DemoScreen from "./screens/DemoScreen";
 
 function App() {
     return (
-        <BrowserRouter>
+        <Router>
             <Header />
 
             <main>
@@ -51,7 +51,7 @@ function App() {
                 </Container>
             </main>
             <Footer />
-        </BrowserRouter>
+        </Router>
     );
 }
 

@@ -51,13 +51,7 @@ function UserEditDialog({
     }, [userUpdateSuccess, closeUserEditDialog]);
 
     useEffect(() => {
-        if (user) {
-            setPermissions(
-                user.permissions.map((permission) => permission.name)
-            );
-        } else {
-            setPermissions(USER_DEFAULT_PERMISSIONS);
-        }
+        setPermissions(user ? user.permissions : USER_DEFAULT_PERMISSIONS);
     }, [user]);
 
     return (
@@ -79,7 +73,7 @@ function UserEditDialog({
                     <Modal.Title>
                         <Icon icon={readOnly ? "fa-eye" : "fa-pencil"} />
                         {user
-                            ? user.first_name + " " + user.last_name
+                            ? user.firstName + " " + user.lastName
                             : "משתמש חדש"}
 
                         {userUpdateLoading ? (
@@ -111,7 +105,7 @@ function UserEditDialog({
                                 <Form.Control
                                     type="text"
                                     id={`firstNameInput${user && user.pk}`}
-                                    defaultValue={user && user.first_name}
+                                    defaultValue={user && user.firstName}
                                     style={{
                                         width: "100%",
                                     }}
@@ -131,7 +125,7 @@ function UserEditDialog({
                                 <Form.Control
                                     type="text"
                                     id={`lastNameInput${user && user.pk}`}
-                                    defaultValue={user && user.last_name}
+                                    defaultValue={user && user.lastName}
                                     style={{
                                         width: "100%",
                                     }}
@@ -246,9 +240,7 @@ function UserEditDialog({
                                     label="משתמש פעיל"
                                     id={`isActiveInput${user && user.pk}`}
                                     onChange={() => setDataChanges(true)}
-                                    defaultChecked={
-                                        user ? user.is_active : true
-                                    }
+                                    defaultChecked={user ? user.isActive : true}
                                     disabled={readOnly}
                                 />
                             </Col>
@@ -263,7 +255,7 @@ function UserEditDialog({
                                     id={`isTemporaryInput${user && user.pk}`}
                                     onChange={() => setDataChanges(true)}
                                     defaultChecked={
-                                        user ? user.is_temporary : false
+                                        user ? user.isTemporary : false
                                     }
                                     disabled={readOnly}
                                 />
@@ -287,7 +279,7 @@ function UserEditDialog({
                                     תאריך הוספה
                                 </Form.Label>
                                 <Col sm={8} className="col-form-label">
-                                    {user && user.created_at}
+                                    {user && user.createdAt}
                                 </Col>
                             </Form.Group>
                         )}
@@ -309,20 +301,20 @@ function UserEditDialog({
                             dispatch(
                                 createOrUpdateUser({
                                     ...user,
-                                    first_name: document.getElementById(
+                                    firstName: document.getElementById(
                                         `firstNameInput${user && user.pk}`
                                     ).value,
-                                    last_name: document.getElementById(
+                                    lastName: document.getElementById(
                                         `lastNameInput${user && user.pk}`
                                     ).value,
                                     email: document.getElementById(
                                         `emailInput${user && user.pk}`
                                     ).value,
                                     permissions: permissions,
-                                    is_active: document.getElementById(
+                                    isActive: document.getElementById(
                                         `isActiveInput${user && user.pk}`
                                     ).checked,
-                                    is_temporary: document.getElementById(
+                                    isTemporary: document.getElementById(
                                         `isTemporaryInput${user && user.pk}`
                                     ).checked,
                                 })

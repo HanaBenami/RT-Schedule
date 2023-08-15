@@ -31,11 +31,12 @@ function UserPicker({ selectedUserEmail, setSelectedUserEmail }) {
             }}
             style={{ marginBottom: 12 }}
         >
-            {users.map((user) => (
-                <option value={user.email} key={user.email}>
-                    {user.nickname}
-                </option>
-            ))}
+            {users &&
+                users.map((user) => (
+                    <option value={user.email} key={user.email}>
+                        {user.nickname}
+                    </option>
+                ))}
         </Form.Select>
     );
 }

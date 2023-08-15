@@ -23,7 +23,7 @@ function CallDataTable({ call, readOnly = false }) {
                     <ConfirmDialog
                         showConfirmDialog={showConfirmDialog}
                         setShowConfirmDialog={setShowConfirmDialog}
-                        title={`${call.scheduled_order} ${call.customer}`}
+                        title={`${call.scheduledOrder} ${call.customer}`}
                         text={`האם אתה בטוח שברצונך לסגור את הקריאה של הלקוח 
                               ${call.customer}?`}
                         warning={
@@ -35,7 +35,7 @@ function CallDataTable({ call, readOnly = false }) {
                             dispatch(
                                 updateCall({
                                     ...call,
-                                    is_done: true,
+                                    isDone: true,
                                 })
                             );
                         }}
@@ -70,8 +70,8 @@ function CallDataTable({ call, readOnly = false }) {
                                 <td>הערות הנהג</td>
                                 <td>
                                     <textarea
-                                        id={`driverNotesTextArea${call.external_id}`}
-                                        defaultValue={call.driver_notes}
+                                        id={`driverNotesTextArea${call.id}`}
+                                        defaultValue={call.driverNotes}
                                         style={{ width: "100%" }}
                                         disabled={readOnly}
                                         onChange={() =>
@@ -99,9 +99,9 @@ function CallDataTable({ call, readOnly = false }) {
                                                                 dispatch(
                                                                     updateCall({
                                                                         ...call,
-                                                                        driver_notes:
+                                                                        driverNotes:
                                                                             document.getElementById(
-                                                                                `driverNotesTextArea${call.external_id}`
+                                                                                `driverNotesTextArea${call.id}`
                                                                             )
                                                                                 .value,
                                                                     })
@@ -118,7 +118,7 @@ function CallDataTable({ call, readOnly = false }) {
                                                         </Button>
                                                     </td>
                                                     <td align="left">
-                                                        {call.is_done ? (
+                                                        {call.isDone ? (
                                                             <Button
                                                                 className="lessPadding"
                                                                 variant="dark"

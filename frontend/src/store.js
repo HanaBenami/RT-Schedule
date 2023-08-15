@@ -3,8 +3,8 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import {
-    addCallExampleReducer,
-    addCallReducer,
+    addCallsExampleReducer,
+    addCallsReducer,
     callsListReducer,
     callUpdateReducer,
 } from "./reducers/callReducer";
@@ -22,8 +22,8 @@ import {
 const reducer = combineReducers({
     callsList: callsListReducer,
     callUpdate: callUpdateReducer,
-    addCall: addCallReducer,
-    addCallExample: addCallExampleReducer,
+    addCalls: addCallsReducer,
+    addCallsExample: addCallsExampleReducer,
     settingsList: settingsListReducer,
     settingUpdate: settingUpdateReducer,
     userAuth: userAuthReducer,
