@@ -2,34 +2,35 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Container, Row } from "react-bootstrap";
 
-import ScheduledCallsGrid from "../components/ScheduledCallsGrid";
-import DatePicker from "../components/DatePicker";
-import Title from "../components/Title";
-import RestrictedComponent from "../components/RestrictedComponent";
+import DatePicker from "../components/utils/DatePicker";
+import UserPicker from "../components/users/UserPicker";
+import CallsGrid from "../components/calls/CallsGrid";
+import Title from "../components/utils/Title";
+import useAuth from "../auth/useAuth";
+import RestrictedComponent from "../components/utils/RestrictedComponent";
 import {
     READ_MY_CALLS_PERMISSION,
     READ_OTHER_CALLS_PERMISSION,
     UPDATE_MY_CALLS_PERMISSION,
     UPDATE_OTHER_CALLS_PERMISSION,
 } from "../constants/userAuthConstants";
-import useAuth from "../auth/useAuth";
-import UserPicker from "../components/UserPicker";
 
 function ScheduleScreen() {
-    const { user, permissions } = useAuth();
+    const { currentUser, currentUserPermissions } = useAuth();
     const hasPermissionToUpdateCallsAssignedToSelf =
-        permissions && permissions.includes(UPDATE_MY_CALLS_PERMISSION);
+        currentUserPermissions && currentUserPermissions.includes(UPDATE_MY_CALLS_PERMISSION);
     const hasPermissionToUpdateCallsAssignToOthers =
-        permissions && permissions.includes(UPDATE_OTHER_CALLS_PERMISSION);
+        currentUserPermissions && currentUserPermissions.includes(UPDATE_OTHER_CALLS_PERMISSION);
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedDriverEmail, setSelectedDriverEmail] = useState(null);
 
+    // setting the current user as the initial selected user
     useEffect(() => {
-        if (user && selectedDriverEmail === null) {
-            setSelectedDriverEmail(user.email);
+        if (currentUser && selectedDriverEmail === null) {
+            setSelectedDriverEmail(currentUser.email);
         }
-    }, [user, selectedDriverEmail]);
+    }, [currentUser, selectedDriverEmail]);
 
     return (
         <RestrictedComponent requiredPermission={READ_MY_CALLS_PERMISSION}>
@@ -38,14 +39,9 @@ function ScheduleScreen() {
                     <Title>סידור עבודה</Title>
                 </Row>
                 <Row>
-                    <DatePicker
-                        selectedDate={selectedDate}
-                        setSelectedDate={setSelectedDate}
-                    />
+                    <DatePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
                 </Row>
-                <RestrictedComponent
-                    requiredPermission={READ_OTHER_CALLS_PERMISSION}
-                >
+                <RestrictedComponent requiredPermission={READ_OTHER_CALLS_PERMISSION}>
                     <Row align="center">
                         <UserPicker
                             selectedUserEmail={selectedDriverEmail}
@@ -54,13 +50,13 @@ function ScheduleScreen() {
                     </Row>
                 </RestrictedComponent>
                 <Row>
-                    <ScheduledCallsGrid
+                    <CallsGrid
                         userEmail={selectedDriverEmail}
-                        date={selectedDate}
+                        scheduledDate={selectedDate}
                         readOnly={
-                            (selectedDriverEmail === user.email &&
+                            (selectedDriverEmail === currentUser.email &&
                                 !hasPermissionToUpdateCallsAssignedToSelf) ||
-                            (selectedDriverEmail !== user.email &&
+                            (selectedDriverEmail !== currentUser.email &&
                                 !hasPermissionToUpdateCallsAssignToOthers)
                         }
                     />

@@ -2,15 +2,13 @@ import React, { useEffect } from "react";
 import { Form } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 
-import { listUsers } from "../actions/userManagmentActions";
-import Loader from "./Loader";
-import Message from "./Message";
+import { listUsers } from "../../actions/userManagmentActions";
+import Loader from "../utils/Loader";
+import Message from "../utils/Message";
 
 function UserPicker({ selectedUserEmail, setSelectedUserEmail }) {
     const dispatch = useDispatch();
-
     const usersList = useSelector((state) => state.usersList);
-
     const { loading, error, users } = usersList;
 
     useEffect(() => {

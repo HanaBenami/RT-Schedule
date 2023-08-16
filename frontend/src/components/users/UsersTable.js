@@ -1,27 +1,24 @@
 import React from "react";
 import BootstrapTable from "react-bootstrap-table-next";
-import filterFactory, {
-    textFilter,
-    selectFilter,
-} from "react-bootstrap-table2-filter";
+import filterFactory, { textFilter, selectFilter } from "react-bootstrap-table2-filter";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, {
     ColumnToggle,
 } from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
 import Button from "react-bootstrap/Button";
 
-import useAuth from "../auth/useAuth";
-import RestrictedComponent from "../components/RestrictedComponent";
+import useAuth from "../../auth/useAuth";
+import RestrictedComponent from "../utils/RestrictedComponent";
 import {
     READ_USERS_PERMISSION,
     UPDATE_USERS_PERMISSION,
     ADD_USERS_PERMISSION,
-} from "../constants/userAuthConstants";
-import Icon from "../components/Icon";
+} from "../../constants/userAuthConstants";
+import Icon from "../utils/Icon";
 import UserLastLogin from "./UserLastLogin";
 
-function UsersTable({ users, onUserEdit, onUserAddition }) {
-    const { user: currentUser, permissions } = useAuth();
+function UsersTable({ users, onUserSelection, onUserAddition }) {
+    const { currentUser, currentUserPermissions } = useAuth();
 
     const { ToggleList } = ColumnToggle;
 
@@ -35,14 +32,14 @@ function UsersTable({ users, onUserEdit, onUserAddition }) {
 
     function editColumnFormatter(cell, row) {
         const readOnly =
-            !(permissions && permissions.includes(UPDATE_USERS_PERMISSION)) ||
+            !(currentUserPermissions && currentUserPermissions.includes(UPDATE_USERS_PERMISSION)) ||
             (currentUser && currentUser.email === row.email);
         return (
             <Button
                 variant="dark"
                 className="smallBtn"
                 onClick={(e) => {
-                    onUserEdit(row, readOnly);
+                    onUserSelection(row, readOnly);
                 }}
             >
                 <Icon icon={readOnly ? "fa-eye" : "fa-pencil"} />
@@ -135,21 +132,11 @@ function UsersTable({ users, onUserEdit, onUserAddition }) {
     ];
 
     return (
-        <RestrictedComponent
-            requiredPermission={READ_USERS_PERMISSION}
-            showError={true}
-        >
-            <ToolkitProvider
-                keyField="pk"
-                data={users}
-                columns={columns}
-                columnToggle
-            >
+        <RestrictedComponent requiredPermission={READ_USERS_PERMISSION} showError={true}>
+            <ToolkitProvider keyField="pk" data={users} columns={columns} columnToggle>
                 {(props) => (
                     <>
-                        <RestrictedComponent
-                            requiredPermission={ADD_USERS_PERMISSION}
-                        >
+                        <RestrictedComponent requiredPermission={ADD_USERS_PERMISSION}>
                             <Button
                                 variant="dark"
                                 onClick={(e) => {

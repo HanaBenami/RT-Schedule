@@ -1,9 +1,10 @@
 import React from "react";
 import Image from "react-bootstrap/Image";
-import phoneImage from "../images/phone.png";
-import PhoneCallLink from "./PhoneCallLink";
 
-function ContactsTable({ contacts }) {
+import phoneImage from "../../images/phone.png";
+import PhoneCallLink from "../utils/PhoneCallLink";
+
+function CallContactsTable({ contacts }) {
     const contactsTableRows = contacts.map((contact) => (
         <tr key={contact.phone}>
             <td>
@@ -12,14 +13,10 @@ function ContactsTable({ contacts }) {
                 </PhoneCallLink>
             </td>
             <td>
-                <PhoneCallLink phone={contact.phone}>
-                    {contact.name}
-                </PhoneCallLink>
+                <PhoneCallLink phone={contact.phone}>{contact.name}</PhoneCallLink>
             </td>
             <td>
-                <PhoneCallLink phone={contact.phone}>
-                    {contact.phone}
-                </PhoneCallLink>
+                <PhoneCallLink phone={contact.phone}>{contact.phone}</PhoneCallLink>
             </td>
         </tr>
     ));
@@ -30,4 +27,4 @@ function ContactsTable({ contacts }) {
     );
 }
 
-export default ContactsTable;
+export default CallContactsTable;

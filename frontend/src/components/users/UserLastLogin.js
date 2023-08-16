@@ -1,5 +1,6 @@
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import Icon from "./Icon";
+
+import Icon from "../utils/Icon";
 
 function UserLastLogin({ user }) {
     return (

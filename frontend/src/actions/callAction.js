@@ -43,9 +43,7 @@ const deserializedCallWithContacts = (serializedCall) => {
     let call = callSerializer.deserialize(serializedCall);
     call = {
         ...call,
-        contacts: call.contacts.map((contact) =>
-            contactSerializer.deserialize(contact)
-        ),
+        contacts: call.contacts.map((contact) => contactSerializer.deserialize(contact)),
     };
     return call;
 };
@@ -58,9 +56,7 @@ export const listCalls = () => async (dispatch, getState) => {
 
         const { data } = await axios.get("/api/calls/list", config);
 
-        const calls = data.map((callData) =>
-            deserializedCallWithContacts(callData)
-        );
+        const calls = data.map((callData) => deserializedCallWithContacts(callData));
         calls.sort((a, b) => (a.id < b.id ? -1 : 1));
 
         dispatch({ type: CALL_LIST_SUCCESS, payload: calls });
@@ -103,9 +99,7 @@ export const addCalls = (jsonInput) => async (dispatch, getState) => {
 
         const { data } = await axios.post(`/api/calls/add`, jsonInput, config);
 
-        const calls = data.map((callData) =>
-            deserializedCallWithContacts(callData)
-        );
+        const calls = data.map((callData) => deserializedCallWithContacts(callData));
 
         dispatch({ type: CALL_ADD_SUCCESS, payload: calls });
 

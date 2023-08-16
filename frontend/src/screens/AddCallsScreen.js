@@ -1,43 +1,30 @@
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import {
-    Button,
-    Card,
-    Col,
-    Collapse,
-    Container,
-    Form,
-    Row,
-} from "react-bootstrap";
+import { Button, Card, Col, Collapse, Container, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import JSONPretty from "react-json-pretty";
 import JSONTheme from "react-json-pretty/themes/acai.css";
 
-import Title from "../components/Title";
-import RestrictedComponent from "../components/RestrictedComponent";
+import Title from "../components/utils/Title";
+import RestrictedComponent from "../components/utils/RestrictedComponent";
 import { ADD_MY_CALLS_PERMISSION } from "../constants/userAuthConstants";
 import { addCalls, getAddCallExample } from "../actions/callAction";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
+import Loader from "../components/utils/Loader";
+import Message from "../components/utils/Message";
 
 function AddCallsScreen() {
     const dispatch = useDispatch();
+
     const addCallExample = useSelector((state) => state.addCallsExample);
-    const {
-        jsonExample,
-        loading: jsonExampleLoading,
-        error: jsonExampleError,
-    } = addCallExample;
+    const { jsonExample, loading: jsonExampleLoading, error: jsonExampleError } = addCallExample;
+    const [jsonExampleOpen, setJsonExampleOpen] = useState(false);
+
     const addCall = useSelector((state) => state.addCalls);
-    const {
-        loading: addCallLoading,
-        error: addCallError,
-        success: addCallSuccess,
-    } = addCall;
+    const { loading: addCallLoading, error: addCallError, success: addCallSuccess } = addCall;
+    const [addCallFormOpen, setAddCallFormOpen] = useState(false);
+
     const fileInputRef = useRef(null);
     const [jsonInput, setJsonInput] = useState(null);
-    const [jsonExampleOpen, setJsonExampleOpen] = useState(false);
-    const [formOpen, setFormOpen] = useState(false);
 
     const readJsonFileContent = (file) => {
         if (!file.type.endsWith("json")) {
@@ -51,10 +38,12 @@ function AddCallsScreen() {
         reader.readAsText(file);
     };
 
+    // loading json example
     useEffect(() => {
         dispatch(getAddCallExample());
     }, [dispatch]);
 
+    // successful calls addition -> ressing the input
     useEffect(() => {
         if (addCallSuccess) {
             setJsonInput(null);
@@ -69,14 +58,11 @@ function AddCallsScreen() {
                     <Title>הוספת קריאות</Title>
                 </Row>
                 <Row className="mb-3">
-                    הוספת ועדכון קריאות אמורים להתבצע באופן שוטף באמצעות ה-API.
-                    להפעלתו באופן ידני, יש לקלוט קובץ JSON.
+                    הוספת ועדכון קריאות אמורים להתבצע באופן שוטף באמצעות ה-API. להפעלתו באופן ידני,
+                    יש לקלוט קובץ JSON.
                 </Row>
                 <Row className="my-3">
-                    <Button
-                        variant="dark"
-                        onClick={() => setJsonExampleOpen(!jsonExampleOpen)}
-                    >
+                    <Button variant="dark" onClick={() => setJsonExampleOpen(!jsonExampleOpen)}>
                         דוגמא למבנה הקובץ
                     </Button>
                     <Collapse in={jsonExampleOpen} className="p-0">
@@ -84,9 +70,7 @@ function AddCallsScreen() {
                             {jsonExampleLoading ? (
                                 <Loader />
                             ) : jsonExampleError ? (
-                                <Message variant="danger">
-                                    {jsonExampleError}
-                                </Message>
+                                <Message variant="danger">{jsonExampleError}</Message>
                             ) : (
                                 <JSONPretty
                                     id="json-example"
@@ -101,13 +85,10 @@ function AddCallsScreen() {
                     </Collapse>
                 </Row>
                 <Row className="my-3">
-                    <Button
-                        variant="dark"
-                        onClick={() => setFormOpen(!formOpen)}
-                    >
+                    <Button variant="dark" onClick={() => setAddCallFormOpen(!addCallFormOpen)}>
                         קליטת קובץ
                     </Button>
-                    <Collapse in={formOpen}>
+                    <Collapse in={addCallFormOpen}>
                         <Card body>
                             <Row>
                                 <Form dir="rtl">
@@ -122,9 +103,7 @@ function AddCallsScreen() {
                                                 type="file"
                                                 accept=".json"
                                                 onChange={(e) => {
-                                                    readJsonFileContent(
-                                                        e.target.files[0]
-                                                    );
+                                                    readJsonFileContent(e.target.files[0]);
                                                 }}
                                             />
                                         </Col>
@@ -135,12 +114,8 @@ function AddCallsScreen() {
                                 <Col>
                                     <Button
                                         variant="success"
-                                        disabled={
-                                            jsonInput === null || addCallLoading
-                                        }
-                                        onClick={() =>
-                                            dispatch(addCalls(jsonInput))
-                                        }
+                                        disabled={jsonInput === null || addCallLoading}
+                                        onClick={() => dispatch(addCalls(jsonInput))}
                                     >
                                         הוסף קריאות
                                     </Button>
@@ -149,13 +124,9 @@ function AddCallsScreen() {
                                     {addCallLoading ? (
                                         <Loader size="40" />
                                     ) : addCallError ? (
-                                        <Message variant="danger">
-                                            {addCallError}
-                                        </Message>
+                                        <Message variant="danger">{addCallError}</Message>
                                     ) : jsonInput === null && addCallSuccess ? (
-                                        <Message variant="success">
-                                            הקריאות נקלטו
-                                        </Message>
+                                        <Message variant="success">הקריאות נקלטו</Message>
                                     ) : (
                                         <></>
                                     )}

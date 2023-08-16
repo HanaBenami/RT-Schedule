@@ -6,26 +6,21 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import CheckboxGroup from "react-checkbox-group";
 
-import RestrictedComponent from "../components/RestrictedComponent";
+import RestrictedComponent from "../utils/RestrictedComponent";
 import {
     UPDATE_USERS_PERMISSION,
     ADD_USERS_PERMISSION,
     USER_PERMISSIONS_MAP,
     USER_DEFAULT_PERMISSIONS,
     READ_USERS_PERMISSION,
-} from "../constants/userAuthConstants";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
-import Icon from "../components/Icon";
-import { createOrUpdateUser } from "../actions/userManagmentActions";
+} from "../../constants/userAuthConstants";
+import Loader from "../utils/Loader";
+import Message from "../utils/Message";
+import Icon from "../utils/Icon";
+import { createOrUpdateUser } from "../../actions/userManagmentActions";
 import UserLastLogin from "./UserLastLogin";
 
-function UserEditDialog({
-    user,
-    readOnly,
-    showUserEditDialog,
-    onCloseUserEditDialog,
-}) {
+function UserEditDialog({ user, readOnly, showUserEditDialog, onCloseUserEditDialog }) {
     const dispatch = useDispatch();
 
     const userCreateOrUpdate = useSelector((state) => state.userCreateOrUpdate);
@@ -35,23 +30,25 @@ function UserEditDialog({
         success: userUpdateSuccess,
     } = userCreateOrUpdate;
 
-    const [permissions, setPermissions] = useState();
+    const [userPermissions, setUserPermissions] = useState();
 
-    const [dataChanges, setDataChanges] = useState(false);
+    const [dataChanged, setDataChanged] = useState(false);
 
     const closeUserEditDialog = useCallback(() => {
-        setDataChanges(false);
+        setDataChanged(false);
         onCloseUserEditDialog();
     }, [onCloseUserEditDialog]);
 
+    // succesful user update -> closing edit dialog
     useEffect(() => {
         if (userUpdateSuccess) {
             closeUserEditDialog();
         }
     }, [userUpdateSuccess, closeUserEditDialog]);
 
+    // loading user permission
     useEffect(() => {
-        setPermissions(user ? user.permissions : USER_DEFAULT_PERMISSIONS);
+        setUserPermissions(user ? user.permissions : USER_DEFAULT_PERMISSIONS);
     }, [user]);
 
     return (
@@ -64,17 +61,11 @@ function UserEditDialog({
                     : ADD_USERS_PERMISSION
             }
         >
-            <Modal
-                show={showUserEditDialog}
-                onHide={closeUserEditDialog}
-                centered
-            >
+            <Modal show={showUserEditDialog} onHide={closeUserEditDialog} centered>
                 <Modal.Header closeButton={false}>
                     <Modal.Title>
                         <Icon icon={readOnly ? "fa-eye" : "fa-pencil"} />
-                        {user
-                            ? user.firstName + " " + user.lastName
-                            : "משתמש חדש"}
+                        {user ? user.firstName + " " + user.lastName : "משתמש חדש"}
 
                         {userUpdateLoading ? (
                             <tr>
@@ -85,9 +76,7 @@ function UserEditDialog({
                         ) : userUpdateError ? (
                             <tr>
                                 <td colSpan="2">
-                                    <Message variant="danger">
-                                        {userUpdateError}
-                                    </Message>
+                                    <Message variant="danger">{userUpdateError}</Message>
                                 </td>
                             </tr>
                         ) : (
@@ -110,7 +99,7 @@ function UserEditDialog({
                                         width: "100%",
                                     }}
                                     onChange={() => {
-                                        setDataChanges(true);
+                                        setDataChanged(true);
                                     }}
                                     disabled={readOnly}
                                 />
@@ -129,7 +118,7 @@ function UserEditDialog({
                                     style={{
                                         width: "100%",
                                     }}
-                                    onChange={() => setDataChanges(true)}
+                                    onChange={() => setDataChanged(true)}
                                     disabled={readOnly}
                                 />
                             </Col>
@@ -147,7 +136,7 @@ function UserEditDialog({
                                     style={{
                                         width: "100%",
                                     }}
-                                    onChange={() => setDataChanges(true)}
+                                    onChange={() => setDataChanged(true)}
                                     disabled={readOnly}
                                 />
                             </Col>
@@ -161,44 +150,31 @@ function UserEditDialog({
                                 <Container className="formControl">
                                     <CheckboxGroup
                                         key={`permission${user && user.pk}`}
-                                        value={permissions}
+                                        value={userPermissions}
                                         onChange={(values) => {
-                                            setPermissions(values);
-                                            setDataChanges(true);
+                                            setUserPermissions(values);
+                                            setDataChanged(true);
                                         }}
                                     >
                                         {(Checkbox) => (
                                             <>
-                                                {Object.keys(
-                                                    USER_PERMISSIONS_MAP
-                                                ).map((category) => (
-                                                    <>
-                                                        <Row>{category}</Row>
-                                                        <Row className="border-bottom border-5 border-white">
-                                                            {Object.keys(
-                                                                USER_PERMISSIONS_MAP[
-                                                                    category
-                                                                ]
-                                                            ).map(
-                                                                (
-                                                                    description
-                                                                ) => {
+                                                {Object.keys(USER_PERMISSIONS_MAP).map(
+                                                    (category) => (
+                                                        <>
+                                                            <Row>{category}</Row>
+                                                            <Row className="border-bottom border-5 border-white">
+                                                                {Object.keys(
+                                                                    USER_PERMISSIONS_MAP[category]
+                                                                ).map((description) => {
                                                                     const permission =
                                                                         USER_PERMISSIONS_MAP[
                                                                             category
-                                                                        ][
-                                                                            description
-                                                                        ];
+                                                                        ][description];
                                                                     return (
-                                                                        <Col
-                                                                            sm={
-                                                                                4
-                                                                            }
-                                                                        >
+                                                                        <Col sm={4}>
                                                                             <label
                                                                                 key={`permission${
-                                                                                    user &&
-                                                                                    user.pk
+                                                                                    user && user.pk
                                                                                 }_${permission}_label`}
                                                                             >
                                                                                 <Checkbox
@@ -214,17 +190,15 @@ function UserEditDialog({
                                                                                         readOnly
                                                                                     }
                                                                                 />
-                                                                                {
-                                                                                    description
-                                                                                }
+                                                                                {description}
                                                                             </label>
                                                                         </Col>
                                                                     );
-                                                                }
-                                                            )}
-                                                        </Row>
-                                                    </>
-                                                ))}
+                                                                })}
+                                                            </Row>
+                                                        </>
+                                                    )
+                                                )}
                                             </>
                                         )}
                                     </CheckboxGroup>
@@ -239,7 +213,7 @@ function UserEditDialog({
                                     type="switch"
                                     label="משתמש פעיל"
                                     id={`isActiveInput${user && user.pk}`}
-                                    onChange={() => setDataChanges(true)}
+                                    onChange={() => setDataChanged(true)}
                                     defaultChecked={user ? user.isActive : true}
                                     disabled={readOnly}
                                 />
@@ -253,10 +227,8 @@ function UserEditDialog({
                                     type="switch"
                                     label="משתמש זמני"
                                     id={`isTemporaryInput${user && user.pk}`}
-                                    onChange={() => setDataChanges(true)}
-                                    defaultChecked={
-                                        user ? user.isTemporary : false
-                                    }
+                                    onChange={() => setDataChanged(true)}
+                                    defaultChecked={user ? user.isTemporary : false}
                                     disabled={readOnly}
                                 />
                             </Col>
@@ -296,7 +268,7 @@ function UserEditDialog({
                     </Button>
                     <Button
                         variant="success"
-                        disabled={!dataChanges}
+                        disabled={!dataChanged}
                         onClick={() => {
                             dispatch(
                                 createOrUpdateUser({
@@ -307,10 +279,9 @@ function UserEditDialog({
                                     lastName: document.getElementById(
                                         `lastNameInput${user && user.pk}`
                                     ).value,
-                                    email: document.getElementById(
-                                        `emailInput${user && user.pk}`
-                                    ).value,
-                                    permissions: permissions,
+                                    email: document.getElementById(`emailInput${user && user.pk}`)
+                                        .value,
+                                    permissions: userPermissions,
                                     isActive: document.getElementById(
                                         `isActiveInput${user && user.pk}`
                                     ).checked,

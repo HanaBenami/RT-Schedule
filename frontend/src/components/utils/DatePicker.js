@@ -1,20 +1,19 @@
 import React from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
+
 import Icon from "./Icon";
 
 function DatePicker({ selectedDate, setSelectedDate }) {
+    const getDateInFewDays = (startDate, daysDiff) =>
+        new Date(startDate.getTime() + daysDiff * 24 * 60 * 60 * 1000);
+
     return (
         <Container width="50%">
             <Row style={{ verticalAlign: "middle" }}>
                 <Col
                     style={{ display: "grid", alignItems: "center" }}
                     align="left"
-                    onClick={() => {
-                        var tomorrow = new Date(
-                            selectedDate.getTime() + 24 * 60 * 60 * 1000
-                        );
-                        setSelectedDate(tomorrow);
-                    }}
+                    onClick={() => setSelectedDate(getDateInFewDays(selectedDate, 1))}
                 >
                     <Icon icon="fa-caret-right fa-2xl" />
                 </Col>
@@ -31,12 +30,7 @@ function DatePicker({ selectedDate, setSelectedDate }) {
                 <Col
                     style={{ display: "grid", alignItems: "center" }}
                     align="right"
-                    onClick={() => {
-                        var yesterday = new Date(
-                            selectedDate.getTime() - 24 * 60 * 60 * 1000
-                        );
-                        setSelectedDate(yesterday);
-                    }}
+                    onClick={() => setSelectedDate(getDateInFewDays(selectedDate, -1))}
                 >
                     <Icon icon="fa-caret-left fa-2xl" />
                 </Col>

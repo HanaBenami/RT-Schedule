@@ -27,9 +27,7 @@ export const listSettings = () => async (dispatch, getState) => {
 
         const { data } = await axios.get("/api/settings/list", config);
 
-        const settings = data.map((settingData) =>
-            settingSerializer.deserialize(settingData)
-        );
+        const settings = data.map((settingData) => settingSerializer.deserialize(settingData));
 
         dispatch({ type: SETTINGS_LIST_SUCCESS, payload: settings });
     } catch (error) {

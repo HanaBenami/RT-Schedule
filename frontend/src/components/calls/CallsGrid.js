@@ -3,13 +3,13 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Accordion from "react-bootstrap/Accordion";
 
-import { listCalls } from "../actions/callAction";
+import { listCalls } from "../../actions/callAction";
 import CallDataTable from "./CallDataTable";
-import Loader from "./Loader";
-import Message from "./Message";
-import Icon from "./Icon";
+import Loader from "../utils/Loader";
+import Message from "../utils/Message";
+import Icon from "../utils/Icon";
 
-function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
+function CallsGrid({ userEmail, scheduledDate, readOnly = false }) {
     const dispatch = useDispatch();
     const callsList = useSelector((state) => state.callsList);
     const { loading, error, calls } = callsList;
@@ -21,22 +21,23 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
                 (call) =>
                     call.driverEmail === userEmail &&
                     new Date(Date.parse(call.scheduledDate)).toDateString() ===
-                        date.toDateString()
+                        scheduledDate.toDateString()
             )
             .sort((a, b) => (a.scheduledOrder < b.scheduledOrder ? -1 : 1));
 
     const [activeCallKey, setActiveCallKey] = useState();
 
+    // loading list of calls
     useEffect(() => {
         dispatch(listCalls());
     }, [dispatch]);
 
+    // reselecting the "current" call
     useEffect(() => {
         if (
             relevantCalls &&
             0 < relevantCalls.length &&
-            undefined ===
-                relevantCalls.find((call) => call.id === activeCallKey)
+            undefined === relevantCalls.find((call) => call.id === activeCallKey)
         ) {
             setActiveCallKey(relevantCalls[0].id);
         }
@@ -50,11 +51,7 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
                 <Message variant="danger">{error}</Message>
             ) : (
                 <Accordion
-                    activeKey={
-                        relevantCalls && 0 < relevantCalls.length
-                            ? activeCallKey
-                            : 0
-                    }
+                    activeKey={relevantCalls && 0 < relevantCalls.length ? activeCallKey : 0}
                     onSelect={(eventKey) => {
                         if (activeCallKey !== eventKey) {
                             setActiveCallKey(eventKey);
@@ -64,19 +61,14 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
                     {relevantCalls && 0 === relevantCalls.length ? (
                         <Accordion.Item eventKey={0}>
                             <Accordion.Header>
-                                <font style={{ fontSize: "larger" }}>
-                                    לא נמצאו קריאות
-                                </font>
+                                <font style={{ fontSize: "larger" }}>לא נמצאו קריאות</font>
                             </Accordion.Header>
                         </Accordion.Item>
                     ) : (
                         relevantCalls &&
                         relevantCalls.map((call) => {
                             return (
-                                <Accordion.Item
-                                    eventKey={call.id}
-                                    key={call.id}
-                                >
+                                <Accordion.Item eventKey={call.id} key={call.id}>
                                     <Accordion.Header>
                                         <font
                                             style={{
@@ -97,15 +89,10 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
                                         >
                                             {call.customer}
                                         </font>
-                                        {call.isDone && (
-                                            <Icon icon="fa-check fa-lg" />
-                                        )}
+                                        {call.isDone && <Icon icon="fa-check fa-lg" />}
                                     </Accordion.Header>
                                     <Accordion.Body className="bg-light bg-body-tertiary">
-                                        <CallDataTable
-                                            call={call}
-                                            readOnly={readOnly}
-                                        />
+                                        <CallDataTable call={call} readOnly={readOnly} />
                                     </Accordion.Body>
                                 </Accordion.Item>
                             );
@@ -117,4 +104,4 @@ function ScheduledCallsGrid({ userEmail, date, readOnly = false }) {
     );
 }
 
-export default ScheduledCallsGrid;
+export default CallsGrid;

@@ -13,7 +13,7 @@ export default function AuthProvider({ children }) {
         error: auth0error,
         isLoading: auth0IsLoading,
         isAuthenticated: auth0IsAuthenticated,
-        user,
+        user: currentUser,
         getAccessTokenSilently,
         loginWithRedirect: auth0login,
         logout: auth0logout,
@@ -22,19 +22,14 @@ export default function AuthProvider({ children }) {
     const [internalIsLoading, setInternalIsLoading] = useState(false);
     const isLoading = internalIsLoading || auth0IsLoading;
 
-    const [internalIsAuthenticated, setInternalIsAuthenticated] =
-        useState(false);
+    const [internalIsAuthenticated, setInternalIsAuthenticated] = useState(false);
     const isAuthenticated = internalIsAuthenticated && auth0IsAuthenticated;
 
     const [internalError, setInternalError] = useState(null);
-    const error = auth0error
-        ? auth0error
-        : internalError
-        ? internalError
-        : null;
+    const error = auth0error ? auth0error : internalError ? internalError : null;
 
     const [accessToken, setAccessToken] = useState(null);
-    const permissions = accessToken && jwt(accessToken)["permissions"];
+    const currentUserPermissions = accessToken && jwt(accessToken)["permissions"];
 
     const handleError = useCallback((error) => {
         const errorMessage =
@@ -42,9 +37,7 @@ export default function AuthProvider({ children }) {
                 ? error.response.data.detail
                 : error.message;
         setInternalError((prevInternalError) =>
-            prevInternalError
-                ? prevInternalError + "; " + errorMessage
-                : errorMessage
+            prevInternalError ? prevInternalError + "; " + errorMessage : errorMessage
         );
     }, []);
 
@@ -80,7 +73,7 @@ export default function AuthProvider({ children }) {
         async function handleLoginOrLogout() {
             if (auth0IsAuthenticated) {
                 const accessToken = await getAccessToken();
-                dispatch(saveUserInfo(user, accessToken));
+                dispatch(saveUserInfo(currentUser, accessToken));
                 setInternalIsAuthenticated(true);
             } else {
                 dispatch(resetUserInfo());
@@ -91,15 +84,15 @@ export default function AuthProvider({ children }) {
         }
 
         handleLoginOrLogout();
-    }, [user, auth0IsAuthenticated, dispatch, getAccessToken]);
+    }, [currentUser, auth0IsAuthenticated, dispatch, getAccessToken]);
 
     const map = {
         // State
         error,
         isAuthenticated,
         isLoading,
-        user,
-        permissions,
+        currentUser,
+        currentUserPermissions,
         // Auth methods
         login,
         logout,

@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "react-bootstrap/Image";
-import wazeImage from "../images/waze.png";
+import wazeImage from "../../images/waze.png";
 
 function WazeLink({ address }) {
     var wazeURL = "https://www.waze.com/ul?q=" + address.replace(/ /g, "+");

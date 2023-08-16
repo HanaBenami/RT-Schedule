@@ -2,7 +2,7 @@ import React from "react";
 import Image from "react-bootstrap/Image";
 import { Container } from "react-bootstrap";
 
-import logo from "../rtlogo.png";
+import logo from "../images/rtlogo.png";
 import config from "../config.json";
 
 function WelcomeScreen() {

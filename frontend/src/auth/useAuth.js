@@ -8,8 +8,8 @@ import AuthContext from "./AuthContext.js";
 //     error,
 //     isAuthenticated,
 //     isLoading,
-//     user,
-//     permissions,
+//     currentUser,
+//     currentUserPrmissions,
 //     // Auth methods:
 //     login,
 //     logout,

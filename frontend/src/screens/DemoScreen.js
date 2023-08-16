@@ -5,9 +5,9 @@ import { Row, Col, Form, Container } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 
 import { createBasicUser } from "../actions/userManagmentActions";
-import Title from "../components/Title";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
+import Title from "../components/utils/Title";
+import Loader from "../components/utils/Loader";
+import Message from "../components/utils/Message";
 
 function DemoScreen() {
     const dispatch = useDispatch();
@@ -15,9 +15,10 @@ function DemoScreen() {
     const basicUserCreate = useSelector((state) => state.basicUserCreate);
     const { loading, error, success } = basicUserCreate;
 
-    const [dataChanges, setDataChanges] = useState(false);
+    const [dataChanged, setDataChanged] = useState(false);
     const [dataPosted, setDataPosted] = useState(false);
 
+    // in case of error, enable the user to post data again
     useEffect(() => {
         if (error) {
             setDataPosted(false);
@@ -33,10 +34,8 @@ function DemoScreen() {
                     setDataPosted(true);
                     dispatch(
                         createBasicUser({
-                            first_name:
-                                document.getElementById(`firstNameInput`).value,
-                            last_name:
-                                document.getElementById(`lastNameInput`).value,
+                            first_name: document.getElementById(`firstNameInput`).value,
+                            last_name: document.getElementById(`lastNameInput`).value,
                             email: document.getElementById(`emailInput`).value,
                         })
                     );
@@ -60,7 +59,7 @@ function DemoScreen() {
                                     }}
                                     required={true}
                                     onChange={() => {
-                                        setDataChanges(true);
+                                        setDataChanged(true);
                                     }}
                                     disabled={dataPosted}
                                 />
@@ -79,7 +78,7 @@ function DemoScreen() {
                                         width: "100%",
                                     }}
                                     required={true}
-                                    onChange={() => setDataChanges(true)}
+                                    onChange={() => setDataChanged(true)}
                                     disabled={dataPosted}
                                 />
                             </Col>
@@ -97,7 +96,7 @@ function DemoScreen() {
                                         width: "100%",
                                     }}
                                     required={true}
-                                    onChange={() => setDataChanges(true)}
+                                    onChange={() => setDataChanged(true)}
                                     disabled={dataPosted}
                                 />
                             </Col>
@@ -109,7 +108,7 @@ function DemoScreen() {
                         <Button
                             type="submit"
                             variant="success"
-                            disabled={!dataChanges || dataPosted}
+                            disabled={!dataChanged || dataPosted}
                         >
                             צור משתמש
                         </Button>
@@ -120,9 +119,7 @@ function DemoScreen() {
                         ) : error ? (
                             <Message variant="danger">{error}</Message>
                         ) : dataPosted && success ? (
-                            <Message variant="success">
-                                המשתמש נוצר - אנא התחבר למערכת
-                            </Message>
+                            <Message variant="success">המשתמש נוצר - אנא התחבר למערכת</Message>
                         ) : (
                             <></>
                         )}

@@ -4,31 +4,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { Container, Row, Col } from "react-bootstrap";
 
 import { listUsers } from "../actions/userManagmentActions";
-import UsersTable from "../components/UsersTable";
-import UserEditDialog from "../components/UserEditDialog";
-import Title from "../components/Title";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
+import UsersTable from "../components/users/UsersTable";
+import UserEditDialog from "../components/users/UserEditDialog";
+import Title from "../components/utils/Title";
+import Loader from "../components/utils/Loader";
+import Message from "../components/utils/Message";
 
 function UsersScreen() {
     const dispatch = useDispatch();
 
     const usersList = useSelector((state) => state.usersList);
-    const {
-        loading: usersListLoading,
-        error: usersListError,
-        users,
-    } = usersList;
+    const { loading: usersListLoading, error: usersListError, users } = usersList;
 
     const [showUserEditDialog, setShowUserEditDialog] = useState(false);
     const [readOnly, setReadOnly] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
 
+    // loading list of users
     useEffect(() => {
         dispatch(listUsers());
     }, [dispatch]);
 
-    const onUserEdit = useCallback(
+    // selecting user -> open user edit dialog for that user
+    const onUserSelection = useCallback(
         (user, readOnly) => {
             setReadOnly(readOnly);
             setSelectedUser(user);
@@ -37,11 +35,13 @@ function UsersScreen() {
         [setSelectedUser, setShowUserEditDialog]
     );
 
+    // clicking on user addinng -> open empty user edit dialog
     const onUserAddition = useCallback(() => {
         setReadOnly(false);
         setShowUserEditDialog(true);
     }, [setShowUserEditDialog]);
 
+    // closing user edit dialog -> resetting user selection
     const onCloseUserEditDialog = useCallback(() => {
         setSelectedUser(null);
         setShowUserEditDialog(false);
@@ -63,7 +63,7 @@ function UsersScreen() {
                             <>
                                 <UsersTable
                                     users={users}
-                                    onUserEdit={onUserEdit}
+                                    onUserSelection={onUserSelection}
                                     onUserAddition={onUserAddition}
                                 />
 
@@ -71,9 +71,7 @@ function UsersScreen() {
                                     user={selectedUser}
                                     readOnly={readOnly}
                                     showUserEditDialog={showUserEditDialog}
-                                    onCloseUserEditDialog={
-                                        onCloseUserEditDialog
-                                    }
+                                    onCloseUserEditDialog={onCloseUserEditDialog}
                                 />
                             </>
                         )}

@@ -2,44 +2,46 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col, Form, Button } from "react-bootstrap";
 
-import { updateSetting } from "../actions/settingsAction";
-import Loader from "./Loader";
-import Message from "./Message";
-import RestrictedComponent from "./RestrictedComponent";
+import { updateSetting } from "../../actions/settingsAction";
+import Icon from "../utils/Icon";
+import Loader from "../utils/Loader";
+import Message from "../utils/Message";
+import RestrictedComponent from "../utils/RestrictedComponent";
+import useAuth from "../../auth/useAuth";
 import {
     READ_SYSTEM_SETTINGS_PERMISSION,
     UPDATE_SYSTEM_SETTINGS_PERMISSION,
-} from "../constants/userAuthConstants";
-import Icon from "./Icon";
-import useAuth from "../auth/useAuth";
+} from "../../constants/userAuthConstants";
 
 function SettingForm({ setting }) {
-    const { permissions } = useAuth();
+    const { currentUserPermissions } = useAuth();
     const readOnly = !(
-        permissions && permissions.includes(UPDATE_SYSTEM_SETTINGS_PERMISSION)
+        currentUserPermissions && currentUserPermissions.includes(UPDATE_SYSTEM_SETTINGS_PERMISSION)
     );
 
     const [editMode, setEditMode] = useState(false);
-    const [dataChanges, setDataChanges] = useState(false);
-    const [updateRequested, setUpdateRequested] = useState(false);
     const [value, setValue] = useState(setting.value);
+    const [valueChanged, setValueChanged] = useState(false);
+    const [updateRequested, setUpdateRequested] = useState(false);
 
     const dispatch = useDispatch();
     const settingUpdate = useSelector((state) => state.settingUpdate);
     const { loading, error, success } = settingUpdate;
 
     const closeEditMode = useCallback(() => {
-        setDataChanges(false);
+        setValueChanged(false);
         setUpdateRequested(false);
         setEditMode(false);
     }, []);
 
+    // closing edit mode w/o saving -> resetting the original setting value
     useEffect(() => {
         if (!editMode) {
             setValue(setting.value);
         }
     }, [setting, editMode]);
 
+    // succesful value update -> closing edit mode
     useEffect(() => {
         if (success && updateRequested) {
             closeEditMode();
@@ -47,14 +49,9 @@ function SettingForm({ setting }) {
     }, [success, updateRequested, closeEditMode]);
 
     return (
-        <RestrictedComponent
-            requiredPermission={READ_SYSTEM_SETTINGS_PERMISSION}
-        >
+        <RestrictedComponent requiredPermission={READ_SYSTEM_SETTINGS_PERMISSION}>
             <Form dir="rtl">
-                <Form.Group
-                    as={Row}
-                    className="d-flex align-items-center justify-content-right"
-                >
+                <Form.Group as={Row} className="d-flex align-items-center justify-content-right">
                     <Form.Label column htmlFor={setting.key} sm={5}>
                         {setting.description}
                     </Form.Label>
@@ -65,7 +62,7 @@ function SettingForm({ setting }) {
                             id={setting.key}
                             value={value}
                             onChange={(e) => {
-                                setDataChanges(true);
+                                setValueChanged(true);
                                 setValue(e.target.value);
                             }}
                             disabled={!editMode}
@@ -100,16 +97,12 @@ function SettingForm({ setting }) {
                                                 })
                                             );
                                         }}
-                                        disabled={loading || !dataChanges}
+                                        disabled={loading || !valueChanged}
                                     >
                                         <Icon icon="fa-save" />
                                         שמור
                                     </Button>
-                                    {error && (
-                                        <Message variant="danger">
-                                            {error}
-                                        </Message>
-                                    )}
+                                    {error && <Message variant="danger">{error}</Message>}
                                 </>
                             )
                         ) : (

@@ -38,9 +38,7 @@ export const listUsers = () => async (dispatch, getState) => {
 
         const { data } = await axios.get("/api/users/list", config);
 
-        const users = data.map((userData) =>
-            userSerializer.deserialize(userData)
-        );
+        const users = data.map((userData) => userSerializer.deserialize(userData));
         users.sort((a, b) => a.lastName.localeCompare(b.lastName));
         users.sort((a, b) => a.firstName.localeCompare(b.firstName));
 

@@ -9,8 +9,8 @@ import {
     USER_EMAIL,
 } from "../constants/userAuthConstants";
 
-import getApiAuthHeaders from "../auth/getApiAuthHeaders";
 import serializeError from "../utils/serializeError";
+import getApiAuthHeaders from "../auth/getApiAuthHeaders";
 
 export const saveUserInfo = (user, accessToken) => async (dispatch) => {
     try {
@@ -45,9 +45,7 @@ export const getApiAuthConfig = async (dispatch, getState) => {
         }
 
         const config = {
-            headers: getApiAuthHeaders(
-                getState()[USER_AUTH][USER_INFO][USER_ACCESS_TOKEN]
-            ),
+            headers: getApiAuthHeaders(getState()[USER_AUTH][USER_INFO][USER_ACCESS_TOKEN]),
         };
         return config;
     } catch (error) {

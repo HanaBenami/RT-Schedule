@@ -3,12 +3,12 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "react-bootstrap/Button";
 
-import { updateCall } from "../actions/callAction";
-import WazeLink from "./WazeLink";
-import ContactsTable from "./ContactsTable";
-import Loader from "./Loader";
-import Message from "./Message";
-import ConfirmDialog from "./ConfirmDialog";
+import { updateCall } from "../../actions/callAction";
+import CallContactsTable from "./CallContactsTable";
+import ConfirmDialog from "../utils/ConfirmDialog";
+import WazeLink from "../utils/WazeLink";
+import Loader from "../utils/Loader";
+import Message from "../utils/Message";
 
 function CallDataTable({ call, readOnly = false }) {
     const dispatch = useDispatch();
@@ -26,11 +26,7 @@ function CallDataTable({ call, readOnly = false }) {
                         title={`${call.scheduledOrder} ${call.customer}`}
                         text={`האם אתה בטוח שברצונך לסגור את הקריאה של הלקוח 
                               ${call.customer}?`}
-                        warning={
-                            driverNotesChange
-                                ? "שים לב! לא שמרת את הערותייך."
-                                : ""
-                        }
+                        warning={driverNotesChange ? "שים לב! לא שמרת את הערותייך." : ""}
                         onConfirm={() => {
                             dispatch(
                                 updateCall({
@@ -63,7 +59,7 @@ function CallDataTable({ call, readOnly = false }) {
                             <tr>
                                 <td>אנשי קשר</td>
                                 <td>
-                                    <ContactsTable contacts={call.contacts} />
+                                    <CallContactsTable contacts={call.contacts} />
                                 </td>
                             </tr>
                             <tr>
@@ -74,19 +70,13 @@ function CallDataTable({ call, readOnly = false }) {
                                         defaultValue={call.driverNotes}
                                         style={{ width: "100%" }}
                                         disabled={readOnly}
-                                        onChange={() =>
-                                            setdriverNotesChange(true)
-                                        }
+                                        onChange={() => setdriverNotesChange(true)}
                                     />
                                 </td>
                             </tr>
                             {!readOnly && (
                                 <tr style={{ borderBottomWidth: 0 }}>
-                                    <td
-                                        style={{ paddingTop: 5 }}
-                                        colSpan={2}
-                                        align="center"
-                                    >
+                                    <td style={{ paddingTop: 5 }} colSpan={2} align="center">
                                         <table width="80%">
                                             <tbody>
                                                 <tr>
@@ -102,17 +92,12 @@ function CallDataTable({ call, readOnly = false }) {
                                                                         driverNotes:
                                                                             document.getElementById(
                                                                                 `driverNotesTextArea${call.id}`
-                                                                            )
-                                                                                .value,
+                                                                            ).value,
                                                                     })
                                                                 );
-                                                                setdriverNotesChange(
-                                                                    false
-                                                                );
+                                                                setdriverNotesChange(false);
                                                             }}
-                                                            disabled={
-                                                                !driverNotesChange
-                                                            }
+                                                            disabled={!driverNotesChange}
                                                         >
                                                             שמור הערות
                                                         </Button>
@@ -130,9 +115,7 @@ function CallDataTable({ call, readOnly = false }) {
                                                                 className="lessPadding"
                                                                 variant="success"
                                                                 onClick={() => {
-                                                                    setShowConfirmDialog(
-                                                                        true
-                                                                    );
+                                                                    setShowConfirmDialog(true);
                                                                 }}
                                                             >
                                                                 סגור קריאה
@@ -150,9 +133,7 @@ function CallDataTable({ call, readOnly = false }) {
                                                     <tr>
                                                         <td colSpan="2">
                                                             <Message variant="danger">
-                                                                {
-                                                                    callUpdate.error
-                                                                }
+                                                                {callUpdate.error}
                                                             </Message>
                                                         </td>
                                                     </tr>
