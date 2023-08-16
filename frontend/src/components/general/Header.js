@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Sticky from "react-sticky-el";
@@ -19,6 +20,7 @@ import {
 
 function Header() {
     const { currentUser, isAuthenticated, isLoading, login, logout } = useAuth();
+    const [selectedPage, setSelectedPage] = useState();
 
     const appName = config.app.name ? config.app.name : "סידור עבודה";
     const logoUrl = config.app.logoUrl ? config.app.logoUrl : logo;
@@ -34,7 +36,11 @@ function Header() {
                 >
                     <>
                         <LinkContainer to="/">
-                            <Nav.Link className="no-padding">
+                            <Nav.Link
+                                className="no-padding"
+                                eventKey="home"
+                                onClick={() => setSelectedPage(null)}
+                            >
                                 <Navbar.Brand>
                                     <Image src={logoUrl} height="30" />
                                     {appName}
@@ -60,14 +66,18 @@ function Header() {
                     </>
                     <Navbar.Toggle aria-controls="navbarCollapse" />
                     <Navbar.Collapse id="navbarCollapse">
-                        <Nav className="mr-auto">
+                        <Nav
+                            className="mr-auto"
+                            activeKey={selectedPage}
+                            onSelect={setSelectedPage}
+                        >
                             {isAuthenticated && !isLoading ? (
                                 <>
                                     <RestrictedComponent
                                         requiredPermission={READ_MY_CALLS_PERMISSION}
                                     >
                                         <LinkContainer to="/schedule">
-                                            <Nav.Link>
+                                            <Nav.Link eventKey="schedule">
                                                 <Icon icon="fa-calendar-days" />
                                                 סידור עבודה
                                             </Nav.Link>
@@ -77,7 +87,7 @@ function Header() {
                                         requiredPermission={ADD_MY_CALLS_PERMISSION}
                                     >
                                         <LinkContainer to="/addCalls">
-                                            <Nav.Link>
+                                            <Nav.Link eventKey="addCalls">
                                                 <Icon icon="fa-plus" />
                                                 הוספת קריאות
                                             </Nav.Link>
@@ -85,7 +95,7 @@ function Header() {
                                     </RestrictedComponent>
                                     <RestrictedComponent requiredPermission={READ_USERS_PERMISSION}>
                                         <LinkContainer to="/users">
-                                            <Nav.Link>
+                                            <Nav.Link eventKey="users">
                                                 <Icon icon="fa-users" />
                                                 ניהול משתמשים
                                             </Nav.Link>
@@ -95,7 +105,7 @@ function Header() {
                                         requiredPermission={READ_SYSTEM_SETTINGS_PERMISSION}
                                     >
                                         <LinkContainer to="/settings">
-                                            <Nav.Link>
+                                            <Nav.Link eventKey="settings">
                                                 <Icon icon="fa-gear" />
                                                 הגדרות מערכת
                                             </Nav.Link>
@@ -111,13 +121,13 @@ function Header() {
                             ) : (
                                 <>
                                     <LinkContainer to="/login" onClick={login}>
-                                        <Nav.Link>
+                                        <Nav.Link eventKey="login">
                                             <Icon icon="fa-user" />
                                             התחבר
                                         </Nav.Link>
                                     </LinkContainer>
                                     <LinkContainer to="/demo">
-                                        <Nav.Link>
+                                        <Nav.Link eventKey="demo">
                                             <Icon icon="fa-user" />
                                             יצירת משתמש דמו
                                         </Nav.Link>
