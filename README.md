@@ -7,6 +7,7 @@ A responsive web application for drivers and delivery person
 ![Python](https://a11ybadges.com/badge?logo=python)
 ![Django](https://a11ybadges.com/badge?logo=django)
 ![JavaScript](https://a11ybadges.com/badge?logo=javascript)
+![TypeScript](https://a11ybadges.com/badge?logo=typescript)
 ![React](https://a11ybadges.com/badge?logo=react)
 ![Redux](https://a11ybadges.com/badge?logo=redux)
 ![Bootstrap](https://a11ybadges.com/badge?logo=bootstrap)
@@ -30,7 +31,6 @@ A responsive web application for drivers and delivery person
 ![image](/screenshots/add_calls.png)
 ![image](/screenshots/schedule.png)
 ![image](/screenshots/user_management.png)
-
 
 ## Online demo
 

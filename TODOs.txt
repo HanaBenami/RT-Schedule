@@ -1,6 +1,12 @@
 git readme VX
+- add TypeScript
 
-TypeScript ?
+TypeScript VX
+- git issue with files rename
+- test everyuthing! 
+- redux
+-- git rid of "as unknown as AnyAction"
+-- all actions / types are "UNKNOWN" - why ?? 
 
 Backend tests ? > add coverage to readme
 
@@ -8,5 +14,4 @@ AWS:
 deployment
 add build status, app status and link to readme
 dashboard
-centralized logs
 ssl certificate

@@ -120,12 +120,12 @@ h5 {
   display: inline-table;
 }
 
-.form-check-input {
+input[type='checkbox'] {
   margin-left: 5px;
   background-color: white !important;
 }
 
-.form-check-input:checked {
+input[type='checkbox']:checked {
   background-color: #1a1a1a !important;
 }
 

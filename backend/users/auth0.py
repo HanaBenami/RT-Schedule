@@ -99,9 +99,8 @@ class Auth0Role(Nameable):
         )
 
     @classmethod
-    @property
     @lru_cache()
-    def TEMPORARY_USER_ROLE(cls) -> "Auth0Role":
+    def getTemporaryUserRole(cls) -> "Auth0Role":
         return cls.getRoleByName("TemporaryUser")
 
 
@@ -228,6 +227,7 @@ class Auth0User(Nameable):
     @property
     def roles(self) -> Set[Auth0Role]:
         urlSuffix = f"users/{self.user_id}/roles"
+        res = executeApiRequest(HTTPMethod.GET, urlSuffix)
         return {
             Auth0Role.deserialize(role_data)
             for role_data in executeApiRequest(HTTPMethod.GET, urlSuffix).json()
@@ -238,7 +238,6 @@ class Auth0User(Nameable):
         current_roles = self.roles
         roles_to_delete: Set[Auth0Role] = current_roles - new_roles
         roles_to_add: Set[Auth0Role] = new_roles - current_roles
-
         roles_changes = {
             HTTPMethod.DELETE: roles_to_delete,
             HTTPMethod.POST: roles_to_add,
@@ -251,14 +250,14 @@ class Auth0User(Nameable):
 
     @property
     def is_temporary(self) -> bool:
-        return Auth0Role.TEMPORARY_USER_ROLE in self.roles
+        return Auth0Role.getTemporaryUserRole() in self.roles
 
     @is_temporary.setter
     def is_temporary(self, is_temporary: bool) -> None:
         if is_temporary:
-            self.roles = self.roles.union({Auth0Role.TEMPORARY_USER_ROLE})
+            self.roles = self.roles.union({Auth0Role.getTemporaryUserRole()})
         else:
-            self.roles = self.roles.difference({Auth0Role.TEMPORARY_USER_ROLE})
+            self.roles = self.roles.difference({Auth0Role.getTemporaryUserRole()})
 
     def __commit_user_creation_to_auth0(self) -> None:
         assert self.user_id is None

@@ -1,0 +1,62 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "react"
+    ],
+    "rules": {
+        // The below was disabled due to conflict with prettier - it's unnecessary
+        // "indent": [
+        //     "warn",
+        //     4
+        // ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "warn",
+            "double",
+            {
+                "allowTemplateLiterals": true
+            }
+        ],
+        "semi": [
+            "warn",
+            "always"
+        ],
+        "react/react-in-jsx-scope": "off",
+        // "react/prop-types": "warn", // Uncomment this line during future migrations
+        "react/no-unescaped-entities": "off",
+        "no-unused-vars": "off",
+        "@typescript-eslint/ban-ts-comment": "warn",
+        "@typescript-eslint/no-unused-vars": "warn",
+        "no-restricted-imports": "off",
+        "@typescript-eslint/no-restricted-imports": [
+            "error",
+            {
+                "name": "react-redux", 
+                "importNames": ["useSelector", "useDispatch"],
+                "message": "Use typed hooks `useAppDispatch` and `useAppSelector` instead."
+            },
+            {
+                "name": "redux", 
+                "importNames": ["Dispatch"],
+                "message": "Use `AppDispatch` from the store instead."
+            }
+        ]
+    }
+}
