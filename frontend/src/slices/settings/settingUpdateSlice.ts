@@ -18,4 +18,6 @@ export const updateSetting: AppAsyncThunk<Setting, Setting> = asyncThunkFactory<
 
 export const slice = sliceFactory<Setting, Setting>(sliceName, updateSetting);
 
+export const { reset } = slice.actions;
+
 export default slice.reducer;

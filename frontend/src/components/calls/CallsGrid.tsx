@@ -9,6 +9,7 @@ import Icon from "../utils/Icon";
 import { Email } from "../../classes/user";
 import { Call } from "../../classes/call";
 import { fetchCallsList } from "../../slices/calls/callsListSlice";
+import { reset } from "../../slices/calls/callUpdateSlice";
 
 interface CallsGridProps {
     userEmail: Email;
@@ -61,6 +62,7 @@ function CallsGrid({ userEmail, scheduledDate, readOnly = false }: CallsGridProp
                     activeKey={`${relevantCalls && 0 < relevantCalls.length ? activeCallKey : 0}`}
                     onSelect={(eventKey) => {
                         if (activeCallKey !== Number(eventKey)) {
+                            dispatch(reset(undefined));
                             setActiveCallKey(Number(eventKey));
                         }
                     }}

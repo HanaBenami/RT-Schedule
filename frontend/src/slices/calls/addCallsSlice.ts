@@ -18,4 +18,6 @@ export const addCalls: AppAsyncThunk<Call, string> = asyncThunkFactory<Call, str
 
 export const slice = sliceFactory<Call, string>(sliceName, addCalls);
 
+export const { reset } = slice.actions;
+
 export default slice.reducer;

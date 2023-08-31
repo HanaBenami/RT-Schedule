@@ -19,4 +19,6 @@ export const createBasicUser: AppAsyncThunk<User, User> = asyncThunkFactory<User
 
 export const slice = sliceFactory<User, User>(sliceName, createBasicUser);
 
+export const { reset } = slice.actions;
+
 export default slice.reducer;

@@ -28,7 +28,9 @@ export function sliceFactory<T, A = void>(
     const slice = createSlice<State<T>, SliceCaseReducers<State<T>>, string>({
         name: sliceName,
         initialState,
-        reducers: {},
+        reducers: {
+            reset: () => initialState,
+        },
         extraReducers: (builder) => {
             builder.addCase(asyncThunk.pending, (state) => {
                 state.status = "loading";

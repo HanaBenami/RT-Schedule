@@ -9,6 +9,7 @@ import Loader from "../components/utils/Loader";
 import Message from "../components/utils/Message";
 import { User } from "../classes/user";
 import { fetchUsersList } from "../slices/users/usersListSlice";
+import { reset } from "../slices/users/userCreateOrUpdateSlice";
 
 function UsersScreen() {
     const dispatch = useAppDispatch();
@@ -45,6 +46,7 @@ function UsersScreen() {
     const onCloseUserEditDialog = useCallback(() => {
         setSelectedUser(null);
         setShowUserEditDialog(false);
+        dispatch(reset(undefined));
     }, [setSelectedUser, setShowUserEditDialog]);
 
     return (

@@ -11,7 +11,7 @@ import { ADD_MY_CALLS_PERMISSION } from "../classes/permissions";
 import Loader from "../components/utils/Loader";
 import Message from "../components/utils/Message";
 import { getAddCallsExample } from "../slices/calls/addCallsExampleSlice";
-import { addCalls } from "../slices/calls/addCallsSlice";
+import { addCalls, reset } from "../slices/calls/addCallsSlice";
 
 function AddCallsScreen() {
     const dispatch = useAppDispatch();
@@ -45,6 +45,7 @@ function AddCallsScreen() {
     // loading json example
     useEffect(() => {
         dispatch(getAddCallsExample());
+        dispatch(reset(undefined));
     }, [dispatch]);
 
     // successful calls addition -> ressing the input

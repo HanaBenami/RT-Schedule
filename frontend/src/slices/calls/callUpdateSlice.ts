@@ -19,4 +19,6 @@ export const updateCall: AppAsyncThunk<Call, Call> = asyncThunkFactory<Call, Cal
 
 export const slice = sliceFactory<Call, Call>(sliceName, updateCall);
 
+export const { reset } = slice.actions;
+
 export default slice.reducer;
