@@ -3,7 +3,7 @@ import { Permission } from "../../classes/permissions";
 import Message from "./Message";
 
 interface RestrictedComponentProps extends React.PropsWithChildren {
-    requiredPermission: Permission;
+    requiredPermission?: Permission;
     showError?: boolean;
 }
 
@@ -14,7 +14,8 @@ function RestrictedComponent({
 }: RestrictedComponentProps) {
     const { currentUserPermissions } = useAuth();
     const hasRequiredPermission =
-        currentUserPermissions && currentUserPermissions.includes(requiredPermission);
+        requiredPermission === undefined ||
+        (currentUserPermissions && currentUserPermissions.includes(requiredPermission));
 
     return hasRequiredPermission ? (
         <> {children} </>

@@ -16,6 +16,7 @@ import {
     READ_USERS_PERMISSION,
     READ_SYSTEM_SETTINGS_PERMISSION,
     ADD_MY_CALLS_PERMISSION,
+    Permission,
 } from "../../classes/permissions";
 
 function Header() {
@@ -24,6 +25,60 @@ function Header() {
 
     const appName = config.app.name ? config.app.name : "סידור עבודה";
     const logoUrl = config.app.logoUrl ? config.app.logoUrl : logo;
+
+    type Link = {
+        to: string;
+        title: string;
+        icon: string;
+        onClick?: React.MouseEventHandler;
+        requiredPermission?: Permission;
+    };
+    const preAuthLinks: Link[] = [
+        {
+            to: "login",
+            title: "התחבר",
+            icon: "fa-user",
+            onClick: login,
+        },
+        {
+            to: "demo",
+            title: "יצירת משתמש דמו",
+            icon: "fa-user",
+        },
+    ];
+
+    const postAuthLinks: Link[] = [
+        {
+            to: "schedule",
+            title: "סידור עבודה",
+            icon: "fa-calendar-days",
+            requiredPermission: READ_MY_CALLS_PERMISSION,
+        },
+        {
+            to: "addCalls",
+            title: "הוספת קריאות",
+            icon: "fa-plus",
+            requiredPermission: ADD_MY_CALLS_PERMISSION,
+        },
+        {
+            to: "users",
+            title: "ניהול משתמשים",
+            icon: "fa-users",
+            requiredPermission: READ_USERS_PERMISSION,
+        },
+        {
+            to: "settings",
+            title: "הגדרות מערכת",
+            icon: "fa-gear",
+            requiredPermission: READ_SYSTEM_SETTINGS_PERMISSION,
+        },
+        {
+            to: "logout",
+            title: "התנתק",
+            icon: "fa-door-open",
+            onClick: logout,
+        },
+    ];
 
     return (
         <header>
@@ -71,69 +126,26 @@ function Header() {
                             activeKey={selectedPage as EventKey}
                             onSelect={setSelectedPage as SelectCallback}
                         >
-                            {isAuthenticated && !isLoading ? (
-                                <>
-                                    <RestrictedComponent
-                                        requiredPermission={READ_MY_CALLS_PERMISSION}
-                                    >
-                                        <LinkContainer to="/schedule">
-                                            <Nav.Link eventKey="schedule">
-                                                <Icon icon="fa-calendar-days" />
-                                                סידור עבודה
-                                            </Nav.Link>
-                                        </LinkContainer>
-                                    </RestrictedComponent>
-                                    <RestrictedComponent
-                                        requiredPermission={ADD_MY_CALLS_PERMISSION}
-                                    >
-                                        <LinkContainer to="/addCalls">
-                                            <Nav.Link eventKey="addCalls">
-                                                <Icon icon="fa-plus" />
-                                                הוספת קריאות
-                                            </Nav.Link>
-                                        </LinkContainer>
-                                    </RestrictedComponent>
-                                    <RestrictedComponent requiredPermission={READ_USERS_PERMISSION}>
-                                        <LinkContainer to="/users">
-                                            <Nav.Link eventKey="users">
-                                                <Icon icon="fa-users" />
-                                                ניהול משתמשים
-                                            </Nav.Link>
-                                        </LinkContainer>
-                                    </RestrictedComponent>
-                                    <RestrictedComponent
-                                        requiredPermission={READ_SYSTEM_SETTINGS_PERMISSION}
-                                    >
-                                        <LinkContainer to="/settings">
-                                            <Nav.Link eventKey="settings">
-                                                <Icon icon="fa-gear" />
-                                                הגדרות מערכת
-                                            </Nav.Link>
-                                        </LinkContainer>
-                                    </RestrictedComponent>
-                                    <LinkContainer to="/logout" onClick={logout}>
-                                        <Nav.Link>
-                                            <Icon icon="fa-door-open" />
-                                            התנתק
-                                        </Nav.Link>
-                                    </LinkContainer>
-                                </>
-                            ) : (
-                                <>
-                                    <LinkContainer to="/login" onClick={login}>
-                                        <Nav.Link eventKey="login">
-                                            <Icon icon="fa-user" />
-                                            התחבר
-                                        </Nav.Link>
-                                    </LinkContainer>
-                                    <LinkContainer to="/demo">
-                                        <Nav.Link eventKey="demo">
-                                            <Icon icon="fa-user" />
-                                            יצירת משתמש דמו
-                                        </Nav.Link>
-                                    </LinkContainer>
-                                </>
-                            )}
+                            <>
+                                {(isAuthenticated && !isLoading ? postAuthLinks : preAuthLinks).map(
+                                    (link) => (
+                                        <RestrictedComponent
+                                            key={link.to}
+                                            requiredPermission={link.requiredPermission}
+                                        >
+                                            <LinkContainer
+                                                to={`/${link.to}`}
+                                                onClick={link.onClick}
+                                            >
+                                                <Nav.Link eventKey={link.to}>
+                                                    <Icon icon={link.icon} />
+                                                    {link.title}
+                                                </Nav.Link>
+                                            </LinkContainer>
+                                        </RestrictedComponent>
+                                    )
+                                )}
+                            </>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>

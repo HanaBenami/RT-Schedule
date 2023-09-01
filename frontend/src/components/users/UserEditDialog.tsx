@@ -45,6 +45,29 @@ function UserEditDialog({
 
     const [dataChanged, setDataChanged] = useState(false);
 
+    type Field = { label: string; idPrefix: string };
+    type TextField = Field & { userValue: string | null };
+    type SwitchField = Field & { userValue: boolean | null | undefined; defaultValue: boolean };
+    const textFields: TextField[] = [
+        { label: "שם פרטי", idPrefix: "firstNameInput", userValue: user && user.firstName },
+        { label: "שם משפחה", idPrefix: "lastNameInput", userValue: user && user.lastName },
+        { label: `דוא"ל`, idPrefix: "emailInput", userValue: user && (user.email as string) },
+    ];
+    const switchFields: SwitchField[] = [
+        {
+            label: "משתמש פעיל",
+            idPrefix: "isActiveInput",
+            userValue: user && user.isActive,
+            defaultValue: true,
+        },
+        {
+            label: "משתמש זמני",
+            idPrefix: "isTemporaryInput",
+            userValue: user && user.isTemporary,
+            defaultValue: false,
+        },
+    ];
+
     const closeUserEditDialog = useCallback(() => {
         setDataChanged(false);
         onCloseUserEditDialog();
@@ -97,61 +120,27 @@ function UserEditDialog({
                 </Modal.Header>
                 <Modal.Body>
                     <Form dir="rtl">
-                        <Form.Group as={Row}>
-                            <Form.Label column sm={3}>
-                                שם פרטי
-                            </Form.Label>
-                            <Col sm={9}>
-                                <Form.Control
-                                    type="text"
-                                    id={`firstNameInput${user && user.pk}`}
-                                    defaultValue={user && user.firstName ? user.firstName : ""}
-                                    style={{
-                                        width: "100%",
-                                    }}
-                                    onChange={() => {
-                                        setDataChanged(true);
-                                    }}
-                                    disabled={readOnly}
-                                />
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Row}>
-                            <Form.Label column sm={3}>
-                                שם משפחה
-                            </Form.Label>
-                            <Col sm={9}>
-                                <Form.Control
-                                    type="text"
-                                    id={`lastNameInput${user && user.pk}`}
-                                    defaultValue={user && user.lastName ? user.lastName : ""}
-                                    style={{
-                                        width: "100%",
-                                    }}
-                                    onChange={() => setDataChanged(true)}
-                                    disabled={readOnly}
-                                />
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Row}>
-                            <Form.Label column sm={3}>
-                                דוא"ל
-                            </Form.Label>
-                            <Col sm={9}>
-                                <Form.Control
-                                    type="text"
-                                    id={`emailInput${user && user.pk}`}
-                                    defaultValue={user && user.email ? (user.email as string) : ""}
-                                    style={{
-                                        width: "100%",
-                                    }}
-                                    onChange={() => setDataChanged(true)}
-                                    disabled={readOnly}
-                                />
-                            </Col>
-                        </Form.Group>
+                        {textFields.map((field) => (
+                            <Form.Group as={Row} key={field.idPrefix}>
+                                <Form.Label column sm={3}>
+                                    {field.label}
+                                </Form.Label>
+                                <Col sm={9}>
+                                    <Form.Control
+                                        type="text"
+                                        id={`${field.idPrefix}${user && user.pk}`}
+                                        defaultValue={field.userValue ? field.userValue : ""}
+                                        style={{
+                                            width: "100%",
+                                        }}
+                                        onChange={() => {
+                                            setDataChanged(true);
+                                        }}
+                                        disabled={readOnly}
+                                    />
+                                </Col>
+                            </Form.Group>
+                        ))}
 
                         <Form.Group as={Row}>
                             <Form.Label column sm={3}>
@@ -216,33 +205,23 @@ function UserEditDialog({
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row}>
-                            <Col className="col-form-label">
-                                <Form.Check
-                                    reverse
-                                    type="switch"
-                                    label="משתמש פעיל"
-                                    id={`isActiveInput${user && user.pk}`}
-                                    onChange={() => setDataChanged(true)}
-                                    defaultChecked={user ? user.isActive : true}
-                                    disabled={readOnly}
-                                />
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Row}>
-                            <Col className="col-form-label">
-                                <Form.Check
-                                    reverse
-                                    type="switch"
-                                    label="משתמש זמני"
-                                    id={`isTemporaryInput${user && user.pk}`}
-                                    onChange={() => setDataChanged(true)}
-                                    defaultChecked={user ? user.isTemporary : false}
-                                    disabled={readOnly}
-                                />
-                            </Col>
-                        </Form.Group>
+                        {switchFields.map((field) => (
+                            <Form.Group as={Row} key={field.label}>
+                                <Col className="col-form-label">
+                                    <Form.Check
+                                        reverse
+                                        type="switch"
+                                        label={field.label}
+                                        id={`${field.idPrefix}${user && user.pk}`}
+                                        onChange={() => setDataChanged(true)}
+                                        defaultChecked={
+                                            field.userValue ? field.userValue : field.defaultValue
+                                        }
+                                        disabled={readOnly}
+                                    />
+                                </Col>
+                            </Form.Group>
+                        ))}
 
                         {user && (
                             <Form.Group as={Row}>
